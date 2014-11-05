@@ -13,6 +13,10 @@
 @end
 
 @implementation MenuViewController
+@synthesize cityName;
+@synthesize districtName;
+@synthesize rooms;
+@synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -99,8 +103,10 @@
     switch (indexPath.row) {
         case 0:
             [self performSegueWithIdentifier:@"flats" sender:self];
+            [self.delegate getParams:self city:cityName district:districtName rooms:rooms favorite:0];
             break;
         case 1:
+            [self.delegate getParams:self city:cityName district:districtName rooms:rooms favorite:1];
             [self performSegueWithIdentifier:@"favorite" sender:self];
             break;
         case 2:
@@ -172,7 +178,6 @@
         FlatsViewController *upcoming = segue.destinationViewController;
         upcoming.segControl.selectedSegmentIndex=1;
     }
-
   
 }
 

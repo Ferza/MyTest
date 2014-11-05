@@ -181,12 +181,16 @@
         
         //UIImage *img=[UIImage imageNamed:[imgName stringByAppendingString:@".png"]];
         /////
-        NSString *imgName= [DOCUMENTS stringByAppendingPathComponent:[[[[NSString stringWithFormat:@"%d",photoID] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",tag]] stringByAppendingPathComponent:@".png"]];//documents/id объявления_j.png
+        NSString *imgP=[[[[NSString stringWithFormat:@"%d",photoID] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",tag]] stringByAppendingString:@".png"];
+        
+        NSString *imgName= [DOCUMENTS stringByAppendingPathComponent:imgP];//documents/id объявления_j.png
+        
+    
         NSData *imgData = [NSData dataWithContentsOfFile:imgName];
         
         UIImage *img=[UIImage imageWithData:imgData];
         
-        self.myImage.image=img;//делаем текущей фото выбранную в предыдущем экране
+        self.myImage.image=img;//устанавливаем текущую фото
         j=tag%3;
     }
     

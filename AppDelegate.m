@@ -61,11 +61,16 @@
         NSArray *photoPath=[photos componentsSeparatedByString:@"["]; //функция для разбора строки
         //и помещения полученных значений в массив photoPath
         /////при запросе на добавление записи на сервер, передавать количество фото, которое можно посчитать при добавлении пути в массив путей к фото
+        //избавиться от пустого символа, чтобы индексация была с 0
+        NSMutableArray *photoPathNew=[[NSMutableArray alloc] init];
+        for (int m=1; m<photoPath.count
+             ; m++) {
+            [photoPathNew addObject:photoPath[m]];
+        }
         for (int j=0; j<[[item valueForKey:@"photo_count"] intValue]; j++)///j < количество записей для этого id на сервере в таблице photos
         {   /////на сервере все пути в поле path
             ///надо парсить до символа [ между ними путь к каждой фото
-            NSString *img_pas=photoPath[j];
-            if (![img_pas isEqual:@""]) {
+            NSString *img_pas=photoPathNew[j];
                 [self getPhoto:img_pas];//запрос на получение фото по указанному адресу
                 NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"EPhoto" inManagedObjectContext:context];
                 ////занесение путей к фото в сущность EPhoto
@@ -78,8 +83,6 @@
                     NSLog(@"Can't save! %@ %@", error, [error localizedDescription]);
                 }
                 k++;
-            }
-            
         }
     }
 }
