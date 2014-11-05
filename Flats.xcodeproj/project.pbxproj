@@ -44,9 +44,6 @@
 		5CA8B0481A00003100FA7E96 /* FastSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA8B0471A00003100FA7E96 /* FastSegue.m */; };
 		5CAADA1B1A094480005D41DD /* CoreFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */; };
 		5CB5C21B19E462B700BB5F7E /* QItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5C21A19E462B700BB5F7E /* QItem.m */; };
-		5CB71AA419FE134700AF847E /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB71AA019FE134700AF847E /* 1.png */; };
-		5CB71AA519FE134700AF847E /* 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB71AA119FE134700AF847E /* 2.png */; };
-		5CB71AA719FE134700AF847E /* 0.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CB71AA319FE134700AF847E /* 0.png */; };
 		5CB7B1231A000AF200AE3261 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7B1221A000AF200AE3261 /* HelpViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -123,9 +120,6 @@
 		5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreFlats.xcdatamodel; sourceTree = "<group>"; };
 		5CB5C21919E462B700BB5F7E /* QItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QItem.h; sourceTree = "<group>"; };
 		5CB5C21A19E462B700BB5F7E /* QItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QItem.m; sourceTree = "<group>"; };
-		5CB71AA019FE134700AF847E /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
-		5CB71AA119FE134700AF847E /* 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 2.png; sourceTree = "<group>"; };
-		5CB71AA319FE134700AF847E /* 0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 0.png; sourceTree = "<group>"; };
 		5CB7B1211A000AF200AE3261 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
 		5CB7B1221A000AF200AE3261 /* HelpViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -193,9 +187,6 @@
 				5C9010AF19F8C377003863D7 /* NSString+APGenerate.h */,
 				5C9010B019F8C377003863D7 /* NSString+APGenerate.m */,
 				5CA1A4E31A07F6EE00AA689C /* trash.png */,
-				5CB71AA019FE134700AF847E /* 1.png */,
-				5CB71AA119FE134700AF847E /* 2.png */,
-				5CB71AA319FE134700AF847E /* 0.png */,
 				5C9010B119F8C377003863D7 /* NSString+APMD5.h */,
 				5C9010B219F8C377003863D7 /* NSString+APMD5.m */,
 				5C342DBC19E15DFE00D29CA2 /* AppDelegate.h */,
@@ -362,10 +353,7 @@
 				5C3298A919F4232F000B5C5D /* 5959_29.png in Resources */,
 				5C342DC619E15DFE00D29CA2 /* Images.xcassets in Resources */,
 				5C342DB819E15DFE00D29CA2 /* InfoPlist.strings in Resources */,
-				5CB71AA519FE134700AF847E /* 2.png in Resources */,
-				5CB71AA419FE134700AF847E /* 1.png in Resources */,
 				5C342DC119E15DFE00D29CA2 /* Main.storyboard in Resources */,
-				5CB71AA719FE134700AF847E /* 0.png in Resources */,
 				5CA1A4E41A07F6EE00AA689C /* trash.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
