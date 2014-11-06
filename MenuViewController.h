@@ -10,13 +10,6 @@
 //#import "FastSegue.h"
 #import "FlatsViewController.h"
 
-@class MenuViewController;
-
-@protocol MenuViewControllerDelegate
-
--(void)getParams:(MenuViewController*)controller city:(NSString*)cityName district:(NSString *)districtName rooms:(NSString *)rooms favorite:(int)isLiked;
-
-@end
 
 @interface MenuViewController : UITableViewController
 @property (strong, nonatomic) IBOutlet UILabel *lblFind;

@@ -34,6 +34,8 @@
 @property UILabel *lblDistrict;
 @property UILabel *lblDescript;
 @property UITextView *tvDescript;
+@property (strong, nonatomic) NSString *cityName;
+@property (strong, nonatomic) NSString *districtName;
 
 @property (strong, nonatomic) IBOutlet UIButton *btnElse;
 - (IBAction)btnElseClick:(id)sender;

@@ -36,7 +36,6 @@
 		5C980A501A0010CD0036CA13 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A461A0010CD0036CA13 /* AFURLResponseSerialization.m */; };
 		5C980A511A0010CD0036CA13 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A481A0010CD0036CA13 /* AFURLSessionManager.m */; };
 		5C9A728119EAF13100AAEF00 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9A728019EAF13000AAEF00 /* AddViewController.m */; };
-		5C9B93B71A029AAE0042C176 /* FlatsNew.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C9B93B51A029AAE0042C176 /* FlatsNew.xcdatamodeld */; };
 		5C9FDFDD19EC2C090007E2F7 /* FlatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FDFDC19EC2C090007E2F7 /* FlatsViewController.m */; };
 		5C9FDFE019EC2CF80007E2F7 /* CitiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FDFDF19EC2CF80007E2F7 /* CitiesViewController.m */; };
 		5CA1A4E41A07F6EE00AA689C /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA1A4E31A07F6EE00AA689C /* trash.png */; };
@@ -107,7 +106,6 @@
 		5C980A481A0010CD0036CA13 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
 		5C9A727F19EAF13000AAEF00 /* AddViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddViewController.h; sourceTree = "<group>"; };
 		5C9A728019EAF13000AAEF00 /* AddViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddViewController.m; sourceTree = "<group>"; };
-		5C9B93B61A029AAE0042C176 /* FlatsNew.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = FlatsNew.xcdatamodel; sourceTree = "<group>"; };
 		5C9FDFDB19EC2C090007E2F7 /* FlatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatsViewController.h; sourceTree = "<group>"; };
 		5C9FDFDC19EC2C090007E2F7 /* FlatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlatsViewController.m; sourceTree = "<group>"; };
 		5C9FDFDE19EC2CF80007E2F7 /* CitiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CitiesViewController.h; sourceTree = "<group>"; };
@@ -213,7 +211,6 @@
 				5CA8B0471A00003100FA7E96 /* FastSegue.m */,
 				5CB7B1211A000AF200AE3261 /* HelpViewController.h */,
 				5CB7B1221A000AF200AE3261 /* HelpViewController.m */,
-				5C9B93B51A029AAE0042C176 /* FlatsNew.xcdatamodeld */,
 				5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */,
 			);
 			path = Flats;
@@ -389,7 +386,6 @@
 				5C9010B419F8C377003863D7 /* NSString+APGenerate.m in Sources */,
 				5C9A728119EAF13100AAEF00 /* AddViewController.m in Sources */,
 				5C9010B519F8C377003863D7 /* NSString+APMD5.m in Sources */,
-				5C9B93B71A029AAE0042C176 /* FlatsNew.xcdatamodeld in Sources */,
 				5CB7B1231A000AF200AE3261 /* HelpViewController.m in Sources */,
 				5C342DBE19E15DFE00D29CA2 /* AppDelegate.m in Sources */,
 				5CB5C21B19E462B700BB5F7E /* QItem.m in Sources */,
@@ -620,16 +616,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		5C9B93B51A029AAE0042C176 /* FlatsNew.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				5C9B93B61A029AAE0042C176 /* FlatsNew.xcdatamodel */,
-			);
-			currentVersion = 5C9B93B61A029AAE0042C176 /* FlatsNew.xcdatamodel */;
-			path = FlatsNew.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
 		5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

@@ -29,7 +29,8 @@
 @synthesize tvDescript;
 @synthesize myPhoto;
 @synthesize btnDelete;
-
+@synthesize cityName;
+@synthesize districtName;
 
 //////добавить обращение к сущности EPhoto, получить из нее пути и загружать фото по указанным путям
 //////////////////////
@@ -108,11 +109,11 @@
     if (is_liked!=0) { //is_favorite in dataModel
         if ([rooms isEqualToString: @"3-к квартира"]) {
             NSString *roomsF=@"4-к квартира";
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@)AND (rooms LIKE %@ OR rooms LIKE %@) AND (is_favorite==%d)",city,room, roomsF,is_liked];
+            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@)AND (rooms LIKE %@ OR rooms LIKE %@) AND (is_favorite==%d)",city,room, roomsF,1];
         }else if(rooms==nil){
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@)  AND (is_favorite==%d)",city,is_liked];
+            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (is_favorite==%d)",city,1];
         }else{
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (rooms LIKE %@) AND (is_favorite==%d)",city,room,is_liked];
+            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (rooms LIKE %@) AND (is_favorite==%d)",city,room,1];
         }
     }
     else{
@@ -146,30 +147,21 @@
     [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=district;
 }
 
--(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityName isCity:(BOOL)isCity
+-(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs isCity:(BOOL)isCity
 {
     if(isCity){
         NSIndexPath *dIndexPath=[NSIndexPath indexPathForRow:1 inSection:0];
     [self.tableView cellForRowAtIndexPath:dIndexPath].textLabel.text=@"Выберите район";
-    [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityName;
+    [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityNameIs;
         [self getFlatsFromCore:rooms is_liked:0];
-    }else{
+    }
+     else{
         [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityName;
-        NSArray *districts=[cityName componentsSeparatedByString:@" "];
+        NSArray *districts=[cityNameIs componentsSeparatedByString:@" "];
         if (districts.count>=1) {  ///вызов функции загрузки из БД
-            [self getFlatsFromCore:rooms is_liked:0];
+        [self getFlatsFromCore:rooms is_liked:0];
        }
     }
-}
-
--(void)getParams:(MenuViewController*)controller city:(NSString*)cityName district:(NSString *)districtName rooms:(NSString *)room favorite:(int)isLiked{
-    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=cityName;
-    
-    indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=districtName;
-    rooms=room;
-    [self getFlatsFromCore:room is_liked:isLiked];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
@@ -214,7 +206,14 @@
     /*if (rooms==nil) {
         rooms=@"Комната";
     }*/
-  
+    NSIndexPath *indexPath;
+    if ((cityName!=nil)&&(districtName!=nil)) {//значения переменным присваиваются в MenuViewController для сохранения выбранных фильтров
+      indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
+      [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=cityName;
+      indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
+      [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=districtName;
+    }
+    
     [self getFlatsFromCore:rooms is_liked: 0];
     [self segControlChange:self.segControl];////????
 }
@@ -576,9 +575,9 @@
 {
     
     NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-    NSString *cityName=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    NSString *cityNameIs=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
     indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    NSString *districtName=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    NSString *districtNameIs=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
     
    if ([segue.identifier isEqualToString:@"city"]) {
 
@@ -587,7 +586,7 @@
         UIBarButtonItem *backButton=[[UIBarButtonItem alloc] init];
         backButton.title=@"Поиск";
         self.navigationItem.backBarButtonItem=backButton;
-        upcoming.cityName=cityName;
+        upcoming.cityName=cityNameIs;
         
     switch ([self.tableView.indexPathForSelectedRow row]) {
             case 0:{
@@ -634,8 +633,8 @@
         backButton.title=@"Назад";
         self.navigationItem.backBarButtonItem=backButton;
       MenuViewController *upcoming=segue.destinationViewController;
-      upcoming.cityName=cityName;
-      upcoming.districtName=districtName;
+      upcoming.cityName=cityNameIs;
+      upcoming.districtName=districtNameIs;
       upcoming.rooms=rooms;
       upcoming.delegate=self;
     }

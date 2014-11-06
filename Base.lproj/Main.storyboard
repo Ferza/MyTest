@@ -87,7 +87,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="bP7-gB-vVn">
                         <nil key="title"/>
-                        <barButtonItem key="backBarButtonItem" title="Назад" id="DQN-kp-zog"/>
+                        <barButtonItem key="backBarButtonItem" title="Назад" style="done" id="DQN-kp-zog"/>
                         <barButtonItem key="leftBarButtonItem" id="cAq-A8-IPd">
                             <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="sZA-Af-Sy4">
                                 <rect key="frame" x="16" y="5" width="71" height="33"/>

@@ -69,39 +69,8 @@ i=0;
             val=@"EDistrict";
             city=@"district";
         }
-   ///////////////////lastID
-       /* NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:val];
-
-        [fetchRequest setResultType:NSDictionaryResultType];
-
-        NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"id"];
-
-        NSExpression *maxExpression = [NSExpression
-        expressionForFunction:@"max:" arguments:[NSArray arrayWithObject:keyPathExpression]];
- 
-        NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
-        
-        [expressionDescription setName:@"maxID"];
-        [expressionDescription setExpression:maxExpression];
-        [expressionDescription setExpressionResultType:NSInteger64AttributeType];
-        
-        [fetchRequest setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-
-        long lastId=0;
-        NSError *error = nil;
-        NSArray *objects = [managedObjectContext executeFetchRequest:fetchRequest error:&error];
-        if (objects == nil) {
-            NSLog(@"Error has occured in reading from core data!!!");
-           }
-        else {
-            if ([objects count] > 0) {
-                
-                NSLog(@"Максимальный ID: %@", [[objects objectAtIndex:0] valueForKey:@"maxID"]);
-                lastId=[[[objects objectAtIndex:0] valueForKey:@"maxID"] integerValue];
-            }
-        }
-        */
         id appDelegate = [[UIApplication sharedApplication] delegate];
+       ////lastID
         long lastId=[appDelegate getLastID:val];
 
         NSString *url;

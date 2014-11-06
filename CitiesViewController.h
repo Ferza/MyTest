@@ -14,7 +14,7 @@
 
 @protocol CitiesViewControllerDelegate 
 
--(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityName isCity:(BOOL)isCity;
+-(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs isCity:(BOOL)isCity;
 
 -(void)getRooms:(CitiesViewController*)controller rooms:(NSString*)rooms;
 @end
