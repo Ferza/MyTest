@@ -425,7 +425,8 @@
     /*[newItem setValue:qItem.name forKey:@"name"];
     [newItem setValue:qItem.phone forKey:@"phone"];*/
     [newItem setValue:[NSDate date] forKey:@"pub_date"];
-    long lID=[self getLastID];
+    id AppDelegate=[[UIApplication sharedApplication] delegate];
+    long lID=[AppDelegate getLastID:@"EFlats"];
     [newItem setValue:[NSNumber numberWithLong:(lID+1)] forKey:@"id"];
    // [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
     NSError *error = nil;
@@ -441,9 +442,8 @@
     NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",city,district,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],uuid];
     //////////request to server to create record for user
     
-    
     //запрос возвращает id добавленной записи
- /*   _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
+   _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     _bashItems=[NSMutableArray arrayWithCapacity:100];
     [_rssParser setDelegate:self];
     [_rssParser parse];
@@ -456,13 +456,9 @@
     //формируем адрес фото на сервере
     NSString *urlPhoto=[@"http://citatas.biz/flats/uploads/" stringByAppendingString:[[qItem valueForKey:@"status"] stringValue]];//+id объявления
 
-    for (int l=0; l<imagePath.count; l++) {
-        //получаем путь к фото и выделяем из строки пути подстроки
-        //каждая до слеша
-        //выбираем последний элемент в полученном массиве=имя фото
-    NSArray *imgName=[imagePath[l] componentsSeparatedByString:@"/"];
+    for (int l=0; l<imagePath.count; l++) {//массив с путями фото формируется при выборе фото
         
-    urlPhoto=[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:imgName.lastObject];///имя фото надо переименовать!!!
+    urlPhoto=[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]]];///имя фото надо переименовать!!!
         //rename file
         ///в формате id_j
         //где j с 1
@@ -475,10 +471,38 @@
     //методу передаем путь для размещения фото на сервере
     NSURL *urlRequest=[NSURL fileURLWithPath:urlPhoto];
     //и путь до фото на устройстве, который получаем из массива путей до фото
-    
-    [self uploadPhotos:urlRequest file:imagePath[l]];//метод добавляет фото на сервер
-  
-    }*/
+    //переименование полученного фото и получение пути до него на устройстве
+    NSString *photoName=[[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]] stringByAppendingString:@".png"];//id_l.png
+    NSString *imgName=[self renameFileFrom:imagePath[l] to:photoName];
+        
+    [self uploadPhotos:urlRequest file:[NSURL URLWithString:imgName]];//метод добавляет фото на сервер
+        
+     //добавление фото в папку DOCUMENTS
+        NSData *photoData = [NSData dataWithContentsOfFile:imgName];
+        NSString *filePathPhoto = [DOCUMENTS stringByAppendingPathComponent:photoName];
+        [photoData writeToFile:filePathPhoto atomically:YES];
+     //занесение данных о фото в сущность EPhoto
+        NSManagedObject *newPhoto = [NSEntityDescription insertNewObjectForEntityForName:@"EPhoto" inManagedObjectContext:context];
+        long lastPhotoID=[AppDelegate getLastID:@"EPhoto"];
+        [newPhoto setValue:[NSNumber numberWithLong: lastPhotoID ]forKey:@"id"];
+        [newPhoto setValue:[NSNumber numberWithLong: [[qItem valueForKey:@"status"] longValue] ]forKey:@"id_flat"];
+        [newPhoto setValue:filePathPhoto forKey:@"path"];
+        
+        
+    }
+}
+
+- (NSString *)renameFileFrom:(NSString*)oldPath to:(NSString *)newName
+{
+    NSString *newPath=[[oldPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:newName];
+    NSFileManager *fileMan = [NSFileManager defaultManager];
+    NSError *error = nil;
+    if (![fileMan moveItemAtPath:oldPath toPath:newPath error:&error])
+    {
+        NSLog(@"Failed to move '%@' to '%@': %@", oldPath, newPath, [error localizedDescription]);
+        return @"";
+    }
+    return newPath;
 }
 
 /////////////////////parser
@@ -526,44 +550,6 @@
     
 }
 
-
--(long)getLastID{
-    // получить ID последней записи в локальной БД
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EFlats" inManagedObjectContext:managedObjectContext];
-    [request setEntity:entity];
-    [request setResultType:NSDictionaryResultType];
-    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"id"];
-    
-    NSExpression *maxExpression = [NSExpression
-                                   expressionForFunction:@"max:" arguments:[NSArray arrayWithObject:keyPathExpression]];
-    
-    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
-    
-    [expressionDescription setName:@"maxID"];
-    [expressionDescription setExpression:maxExpression];
-    [expressionDescription setExpressionResultType:NSInteger64AttributeType];
-    
-    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-    
-    // Выполнение запроса.
-    long lastId=0;
-    NSError *error = nil;
-    NSArray *objects = [managedObjectContext executeFetchRequest:request error:&error];
-    if (objects == nil) {
-        NSLog(@"Error has occured in reading from core data!!!");
-       }
-    else {
-        if ([objects count] > 0) {
-            
-            NSLog(@"Максимальный ID: %@", [[objects objectAtIndex:0] valueForKey:@"maxID"]);
-            lastId=[[[objects objectAtIndex:0] valueForKey:@"maxID"] integerValue];
-        }
-    }
-    return lastId;
-}
 #pragma mark - Image capture
 - (IBAction)takePicture:(UITapGestureRecognizer*)sender {
 	UIActionSheet *sheet;
