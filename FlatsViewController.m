@@ -156,7 +156,7 @@
         [self getFlatsFromCore:rooms is_liked:0];
     }
      else{
-        [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityName;
+        [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityNameIs;
         NSArray *districts=[cityNameIs componentsSeparatedByString:@" "];
         if (districts.count>=1) {  ///вызов функции загрузки из БД
         [self getFlatsFromCore:rooms is_liked:0];
