@@ -72,13 +72,13 @@ i=0;
         id appDelegate = [[UIApplication sharedApplication] delegate];
        ////lastID
         long lastId=[appDelegate getLastID:val];
-
+       
         NSString *url;
         if ([cValue isEqualToString: @"0"]) {
-            url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&city=%@&city_id=%ld",        [appDelegate uuid],city,lastId];
+            url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&city=%@&city_id=%ld",        [appDelegate getUUID],city,lastId];
         }
         if ([cValue isEqualToString:@"1"]) {
-            url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&district=%@&district_id=%ld",        [appDelegate uuid],city,lastId];
+            url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&district=%@&district_id=%ld",        [appDelegate getUUID],city,lastId];
         }
         
         _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:url]];

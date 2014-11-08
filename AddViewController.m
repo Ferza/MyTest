@@ -425,8 +425,8 @@
     /*[newItem setValue:qItem.name forKey:@"name"];
     [newItem setValue:qItem.phone forKey:@"phone"];*/
     [newItem setValue:[NSDate date] forKey:@"pub_date"];
-    id AppDelegate=[[UIApplication sharedApplication] delegate];
-    long lID=[AppDelegate getLastID:@"EFlats"];
+    id appDelegate=[[UIApplication sharedApplication] delegate];
+    long lID=[appDelegate getLastID:@"EFlats"];
     [newItem setValue:[NSNumber numberWithLong:(lID+1)] forKey:@"id"];
    // [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
     NSError *error = nil;
@@ -434,12 +434,7 @@
         NSLog(@"Can't save! %@ %@", error, [error localizedDescription]);
     }
 
-    //getting uuid
-    NSString *uuid= @"";
-    NSString *key=@"flatsUUID";
-    uuid= [KeychainWrapper keychainStringFromMatchingIdentifier:key];
-    
-    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",city,district,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],uuid];
+    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",city,district,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],[appDelegate getUUID]];
     //////////request to server to create record for user
     
     //запрос возвращает id добавленной записи
@@ -458,7 +453,7 @@
 
     for (int l=0; l<imagePath.count; l++) {//массив с путями фото формируется при выборе фото
         
-    urlPhoto=[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]]];///имя фото надо переименовать!!!
+    urlPhoto=[[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]]] stringByAppendingString:@".png"];///имя фото надо переименовать!!!
         //rename file
         ///в формате id_j
         //где j с 1
@@ -483,7 +478,7 @@
         [photoData writeToFile:filePathPhoto atomically:YES];
      //занесение данных о фото в сущность EPhoto
         NSManagedObject *newPhoto = [NSEntityDescription insertNewObjectForEntityForName:@"EPhoto" inManagedObjectContext:context];
-        long lastPhotoID=[AppDelegate getLastID:@"EPhoto"];
+        long lastPhotoID=[appDelegate getLastID:@"EPhoto"];
         [newPhoto setValue:[NSNumber numberWithLong: lastPhotoID ]forKey:@"id"];
         [newPhoto setValue:[NSNumber numberWithLong: [[qItem valueForKey:@"status"] longValue] ]forKey:@"id_flat"];
         [newPhoto setValue:filePathPhoto forKey:@"path"];

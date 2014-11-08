@@ -14,11 +14,29 @@
 @synthesize managedObjectContext = _managedObjectContext;
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize uuid;
-@synthesize image;
+//@synthesize uuid;
 @synthesize days;
 
--(void)getUUID{
+
+-(void)createUserRecord{
+    [self getUUID];
+    //////////request to server to create record for user
+    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?login=%@",uuid];
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]
+                                             cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:15.0];
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    
+    if (connection) {
+        NSLog(@"Connecting...");
+    }
+    else {
+        NSLog(@"Connection error!");
+    }
+
+}
+-(NSString *)getUUID{
     //getting uuid
     uuid= @"";
     NSString *key=@"flatsUUID";
@@ -30,23 +48,8 @@
         [KeychainWrapper createKeychainValue:uuid forIdentifier:key];
     }
 
-    ////////////uuid//////////////////////
-    
-    //////////request to server to create record for user
-    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?login=%@",uuid];
-   
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]
-                                             cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:15.0];
-   
-     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
-     
-     if (connection) {
-     NSLog(@"Connecting...");
-     }
-     else {
-     NSLog(@"Connection error!");
-     }
-}
+    return uuid;
+   }
 
 -(void)getPhotosFromServer{
     ///путь к папке сохранения фото
@@ -237,6 +240,7 @@
         [newItem setValue:qItem.pub_date forKey:@"pub_date"];
         [newItem setValue:[NSNumber numberWithLong:[qItem.id_rec intValue]] forKey:@"id"];
         [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
+        //[newItem setValue:[NSNumber numberWithInt:0] forKey:@"is_favorite"];
         days=qItem.days;
         //[newItem setValue:[NSNumber numberWithInt:[qItem.likes intValue]] forKey:@"likes"];
         NSError *error = nil;
@@ -252,7 +256,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [self getUUID];//uuid
+    [self createUserRecord];//uuid
     [self getNewFlats];//getting new flats
     [self getPhotosFromServer];//getting photos from server and adding its to the core data
     [self addRecords];//adding records into core_data
