@@ -31,6 +31,11 @@
 {
     //[self performSegueWithIdentifier:@"FastSegue" sender:nil];
     [super viewDidLoad];
+    [self.tableView setBackgroundColor:[UIColor darkGrayColor]];
+    self.tableView.opaque=YES;
+     self.navigationItem.leftBarButtonItem=nil;
+     self.navigationItem.hidesBackButton=YES;
+    //[self.navigationController.navigationBar setBackgroundColor:[UIColor blackColor]];
 }
 
 
@@ -61,7 +66,10 @@
     if(cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIndetfier];
     }
-
+    cell.backgroundColor=[UIColor darkGrayColor];
+    cell.textLabel.textColor=[UIColor whiteColor];
+    [cell.textLabel setTextAlignment:NSTextAlignmentNatural];
+    cell.opaque=YES;
     switch (indexPath.row) {
         case 0:
             cell.textLabel.text=@"Поиск квартир";
@@ -86,15 +94,10 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat h=50;
-    switch (indexPath.row) {
-        case 2:
-             h=h*2;
-            break;
-        case 3:
-            h=h*3;
-            break;
-        default:
-            break;
+    if ((indexPath.row==0)||(indexPath.row==2)) {
+        h*=2;
+    }else if(indexPath.row==3){
+        h*=3;
     }
     return h;
 }

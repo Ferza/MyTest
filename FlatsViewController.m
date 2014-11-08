@@ -185,7 +185,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    self.navigationItem.leftBarButtonItem=nil;
+    self.navigationItem.hidesBackButton=YES;
     id appDelegate = [[UIApplication sharedApplication] delegate];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     UILabel *labelView = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
@@ -630,14 +631,15 @@
     }
     
   else if ([segue.identifier isEqualToString:@"menu"]) {
-        UIBarButtonItem *backButton=[[UIBarButtonItem alloc] init];
+       /* UIBarButtonItem *backButton=[[UIBarButtonItem alloc] init];
         backButton.title=@"Назад";
-        self.navigationItem.backBarButtonItem=backButton;
+        self.navigationItem.backBarButtonItem=backButton;*/
       MenuViewController *upcoming=segue.destinationViewController;
       upcoming.cityName=cityNameIs;
       upcoming.districtName=districtNameIs;
       upcoming.rooms=rooms;
-      upcoming.delegate=self;
+      upcoming.navigationController.navigationItem.hidesBackButton=YES;
+      //upcoming.delegate=self;
     }
   
 }
