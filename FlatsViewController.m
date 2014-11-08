@@ -495,6 +495,7 @@
     NSIndexPath *indPath=[NSIndexPath indexPathForRow:sender.tag inSection:1];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indPath]
                           withRowAnimation:UITableViewRowAnimationFade];
+    [self.tableView reloadData];
     // Сохраняем изменения
     NSError *error;
     if (![context save:&error]) {
