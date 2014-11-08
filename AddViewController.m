@@ -74,6 +74,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     UILabel *labelView = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     labelView.text=@"РАСПОЛОЖЕНИЕ";
@@ -403,21 +404,24 @@
 
 - (IBAction)btnAddClick:(id)sender {
      //////add data to Core
+    NSIndexPath *indexPath;
+    indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
+    NSString *city=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    
+    indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
+    NSString *district=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    
+    indexPath=[NSIndexPath indexPathForRow:0 inSection:1];
+    NSString *rooms=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    
+    if ((![city isEqualToString:@"Город"])&&(![district isEqualToString:@"Выберите район"])&&(![rooms isEqualToString:@"Комнат"])) {//проверка полей на заполненность
+     
     NSManagedObjectContext *context = [self managedObjectContext];
     
     NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"EFlats" inManagedObjectContext:context];
     
-     NSIndexPath *indexPath;
-     indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-     NSString *city=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
     [newItem setValue:city forKey:@"city"];
-     
-     indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-     NSString *district=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
     [newItem setValue:district forKey:@"place"];
-    
-    indexPath=[NSIndexPath indexPathForRow:0 inSection:1];
-    NSString *rooms=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
     [newItem setValue:rooms forKey:@"rooms"];
     [newItem setValue:self.tvPrice.text forKey:@"price"];
     [newItem setValue:self.tvFlat.text forKey:@"descript"];
@@ -483,7 +487,12 @@
         [newPhoto setValue:[NSNumber numberWithLong: [[qItem valueForKey:@"status"] longValue] ]forKey:@"id_flat"];
         [newPhoto setValue:filePathPhoto forKey:@"path"];
         
+     }
         
+    }//все поля заполнены
+    else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Необходимо указать город, район и количество комнат!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
     }
 }
 
