@@ -33,9 +33,9 @@
     [super viewDidLoad];
     [self.tableView setBackgroundColor:[UIColor darkGrayColor]];
     self.tableView.opaque=YES;
-     self.navigationItem.leftBarButtonItem=nil;
-     self.navigationItem.hidesBackButton=YES;
-    //[self.navigationController.navigationBar setBackgroundColor:[UIColor blackColor]];
+    self.navigationItem.leftBarButtonItem=nil;
+    self.navigationItem.hidesBackButton=YES;
+    [self.navigationController.navigationBar setBarTintColor:[UIColor darkGrayColor]];
 }
 
 
@@ -69,6 +69,7 @@
     cell.backgroundColor=[UIColor darkGrayColor];
     cell.textLabel.textColor=[UIColor whiteColor];
     [cell.textLabel setTextAlignment:NSTextAlignmentNatural];
+    cell.textLabel.textAlignment = NSTextAlignmentJustified;
     cell.opaque=YES;
     switch (indexPath.row) {
         case 0:
