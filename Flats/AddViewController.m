@@ -19,7 +19,11 @@
 @synthesize tfPhone;
 @synthesize tap;
 @synthesize tfPrice;
-
+@synthesize cityName;
+@synthesize districtName;
+@synthesize rooms;
+@synthesize cValue;
+@synthesize roomsIndex;
 ///////upload photos to server
 /////вызывать метод для каждой фотки
 -(void)uploadPhotos:(NSURL *)URL file:(NSURL *)filePath{
@@ -60,7 +64,6 @@
     }
     return model;
 }
-//////////////core data
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -74,17 +77,16 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     UILabel *labelView = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     labelView.text=@"РАСПОЛОЖЕНИЕ";
     [headerView addSubview:labelView];
     self.tableView.tableHeaderView = headerView;
+    k=0;
+    cValue=1;
 }
 
-- (void)viewDidAppear:(BOOL)animated{
-    [super viewDidAppear:animated];
-    k=0;
-}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -100,29 +102,23 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSInteger result = 0;
-    switch (section) {
-        case 0:
-            result=2;
-            break;
-        case 1:
-            result=3;
-            break;
-            
-        default:
-            result=1;
-            break;
+    NSInteger result = 1;
+    if (section==0) {
+        result=2;
+    }else if(section==1){
+        result=3;
     }
-
     return result;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"MyCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-     [cell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
     // Configure the cell...
+    static NSString *simpleTableIndetfier = @"MyCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIndetfier];
+    if(cell == nil){
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIndetfier];
+    }
     switch (indexPath.section) {
         case 0:
             [self configureOtherCell:cell atIndexPath:indexPath];
@@ -131,11 +127,9 @@
             [self configureCell:cell atIndexPath:indexPath];
             break;
         case 2:
-            cell.accessoryType=0;
             [self configureCellPhoto:cell atIndexPath:indexPath];
             break;
         case 3:
-            cell.accessoryType=0;
             [self configureCellPhone:cell atIndexPath:indexPath];
             break;
         default:
@@ -145,16 +139,8 @@
 }
 
 -(void)configureCellPhone:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
+    cell.accessoryType=0;
     UIView *cellView = cell.contentView;
-   /* tvPhone = [[UITextView alloc]initWithFrame:cellView.frame];
-    [tvPhone setUserInteractionEnabled:YES];
-    [tvPhone setScrollEnabled:YES];
-    [tvPhone setKeyboardType:UIKeyboardTypeNumbersAndPunctuation];
-    tvPhone.scrollsToTop = YES;
-    tvPhone.textAlignment = NSTextAlignmentLeft;
-   // tvPhone.text=@"Телефон";
-    tvPhone.delegate=self;
-    [cellView addSubview:tvPhone];*/
     
     tfPhone=[[UITextField alloc] initWithFrame:cellView.frame];
     [tfPhone setUserInteractionEnabled:YES];
@@ -179,21 +165,20 @@
     [cellView addSubview:lblPrice];
 
 }
+
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [textField resignFirstResponder];
     return YES;
 }
+
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     if ([string isEqualToString:@"\n"]) {
         [textField resignFirstResponder];
-        
         return NO;
     }
-    
     return YES;
-    
 }
 
 -(void)configureCellTV:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
@@ -208,7 +193,9 @@
     [cellView addSubview:tvFlat];
     
 }
+
 -(void)configureCellPhoto:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
+    cell.accessoryType=0;
     UIView *cellView = cell.contentView;
     UIImage *image;
   
@@ -228,15 +215,15 @@
        tap.delegate=self;
     [imageView addGestureRecognizer:tap];
     
-    
     [cellView addSubview:imageView]; // add the image view as a subview of the view controllers view
-
 }
+
 //////gesture
 -(void) didTapOnImageView:(UIGestureRecognizer*) recognizer {
     //код который должен отработать
     [self takePicture:recognizer];
 }
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
@@ -246,7 +233,11 @@
     switch (indexPath.row) {
         case 0:
             cell.accessoryType=1;
-            cell.textLabel.text=@"Комнат";
+            if (rooms==nil) {
+                cell.textLabel.text=@"Комнат";
+            }else{
+                cell.textLabel.text=rooms;
+            }
             break;
         case 1:
             cell.accessoryType=0;
@@ -260,24 +251,31 @@
             break;
     }
 }
+
 -(void)configureOtherCell:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row==0) {
         cell.accessoryType=1;
-        cell.textLabel.text=@"Город";
+        if (cityName==nil) {
+            cell.textLabel.text=@"Город";
+        }else{
+            cell.textLabel.text=cityName;
+        }
     }
     else{
         cell.accessoryType=1;
-        cell.textLabel.text=@"Выберите район";
+        if (districtName==nil) {
+           cell.textLabel.text=@"Выберите район";
+        }else{
+            cell.textLabel.text=districtName;
+        }
     }
 }
+
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     
     UIView *result = nil;
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     switch (section) {
-        case 0:
-            //label.text = @"РАСПОЛОЖЕНИЕ";
-            break;
         case 1:
             label.text = @"ХАРАКТЕРИСТИКИ";
             break;
@@ -320,12 +318,9 @@
 {
    if ([text isEqualToString:@"\n"]) {
         [textView resignFirstResponder];
-        
         return NO;
     }
-   
     return YES;
-  
 }
 
 - (BOOL)textViewShouldReturn:(UITextView *)textView {
@@ -345,19 +340,20 @@
     }
 }
 
--(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityName isCity:(BOOL)isCity
+-(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs district:(NSString *)districtNameIs valueIs:(int) value
 {
-    //[self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityName;
-    if(isCity){
-        NSIndexPath *dIndexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-        [self.tableView cellForRowAtIndexPath:dIndexPath].textLabel.text=@"Выберите район";
-    }else{
-        [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityName;
-    }
+    cityName=cityNameIs;
+    districtName=districtNameIs;
+    cValue=value;
+    [self.tableView reloadData];
 }
--(void)getRooms:(CitiesViewController*)controller rooms:(NSString*)rooms{
-        [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=rooms;
+
+-(void)getRooms:(CitiesViewController*)controller rooms:(NSString *)roomsCount index:(NSIndexPath *)indexPath{
+    rooms=roomsCount;
+    roomsIndex=indexPath;
+    [self.tableView reloadData];
 }
+
 #pragma mark - Navigation
 
 // In a story board-based application, you will often want to do a little preparation before navigation
@@ -370,115 +366,149 @@
     
     if (self.tableView.indexPathForSelectedRow.section==0) {
         
-        NSIndexPath *indPath=[NSIndexPath indexPathForRow:1 inSection:0];        if ([[self.tableView cellForRowAtIndexPath:indPath].textLabel.text isEqualToString: @"Выберите район"]) {
-            upcoming.district=@"district";
-        }else
-        {
-            upcoming.district=nil;
-        }
-        
     if (self.tableView.indexPathForSelectedRow.row==0) {
-         upcoming.cValue=@"0";
-         upcoming.delegate=self;
+        upcoming.cValue=0;
+        upcoming.cityName=@"Город";
+        upcoming.districtName=districtName;
+        upcoming.delegate=self;
     }
     else {
-        NSIndexPath *indexPath;
-        indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-        NSString *cityN=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-        
-        upcoming.cValue=@"1";
-        upcoming.cityName=cityN;
-        upcoming.delegate=self;
+        if (cValue!=3) {
+            upcoming.cValue=1;
+            upcoming.cityName=cityName;
+            upcoming.districtName=districtName;
+            upcoming.delegate=self;
+        }else{
+            upcoming.cValue=3;
+            upcoming.cityName=cityName;
+            upcoming.districtName=districtName;
+            upcoming.delegate=self;
+        }
+
     }
         
     }
     else if(self.tableView.indexPathForSelectedRow.section==1){
         if (self.tableView.indexPathForSelectedRow.row==0) {
-            upcoming.cValue=@"2";
+            upcoming.cValue=2;
             upcoming.delegate=self;
+            upcoming.roomsIndex=roomsIndex;
         }
     }
    upcoming.addVC=@"AddViewController";
 }
 
-- (IBAction)btnAddClick:(id)sender {
-     //////add data to Core
+-(void)addRecordsToCore{
+    
     NSManagedObjectContext *context = [self managedObjectContext];
     
     NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"EFlats" inManagedObjectContext:context];
     
-     NSIndexPath *indexPath;
-     indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-     NSString *city=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    [newItem setValue:city forKey:@"city"];
-     
-     indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-     NSString *district=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    [newItem setValue:district forKey:@"place"];
-    
-    indexPath=[NSIndexPath indexPathForRow:0 inSection:1];
-    NSString *rooms=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
+    [newItem setValue:cityName forKey:@"city"];
+    [newItem setValue:districtName forKey:@"place"];
     [newItem setValue:rooms forKey:@"rooms"];
     [newItem setValue:self.tvPrice.text forKey:@"price"];
     [newItem setValue:self.tvFlat.text forKey:@"descript"];
     [newItem setValue:self.tfPhone.text forKey:@"phone"];
     /*[newItem setValue:qItem.name forKey:@"name"];
-    [newItem setValue:qItem.phone forKey:@"phone"];*/
+     [newItem setValue:qItem.phone forKey:@"phone"];*/
     [newItem setValue:[NSDate date] forKey:@"pub_date"];
-    long lID=[self getLastID];
+    id appDelegate=[[UIApplication sharedApplication] delegate];
+    long lID=[appDelegate getLastID:@"EFlats"];
     [newItem setValue:[NSNumber numberWithLong:(lID+1)] forKey:@"id"];
-   // [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
+    // [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
     NSError *error = nil;
     if(![context save:&error]){
         NSLog(@"Can't save! %@ %@", error, [error localizedDescription]);
     }
 
-    //getting uuid
-    NSString *uuid= @"";
-    NSString *key=@"flatsUUID";
-    uuid= [KeychainWrapper keychainStringFromMatchingIdentifier:key];
+}
+- (IBAction)btnAddClick:(id)sender {
+     //////add data to Core
     
-    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",city,district,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],uuid];
+    if ((![cityName isEqualToString:@"Город"])&&(![districtName isEqualToString:@"Выберите район"])&&(![rooms isEqualToString:@"Комнат"])) {//проверка полей на заполненность
+        
+    id appDelegate=[[UIApplication sharedApplication] delegate];
+    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",cityName,districtName,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],[appDelegate getUUID]];
+        
+    url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+       
     //////////request to server to create record for user
-    
-    
     //запрос возвращает id добавленной записи
- /*   _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
+   _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     _bashItems=[NSMutableArray arrayWithCapacity:100];
     [_rssParser setDelegate:self];
     [_rssParser parse];
 
-   /////уточнить
+        
+    if (_bashItems.count!=0){
+        
+    QItem *qItem=[_bashItems objectAtIndex:0];
+     
+    if (![[qItem valueForKey:@"status"]isEqualToString:@"You are not allowed to add records anymore!"]){
+    [self addRecordsToCore];//добавление в core data
+ 
+    NSManagedObjectContext *context = [self managedObjectContext];
     //////нужен массив с путями до выбранных фото!!!!!
-        QItem *qItem=[_bashItems objectAtIndex:0];
-        //[qItem valueForKey:@"status"];//id добавленной записи
-    
+        
     //формируем адрес фото на сервере
-    NSString *urlPhoto=[@"http://citatas.biz/flats/uploads/" stringByAppendingString:[[qItem valueForKey:@"status"] stringValue]];//+id объявления
-
-    for (int l=0; l<imagePath.count; l++) {
-        //получаем путь к фото и выделяем из строки пути подстроки
-        //каждая до слеша
-        //выбираем последний элемент в полученном массиве=имя фото
-    NSArray *imgName=[imagePath[l] componentsSeparatedByString:@"/"];
+    NSString *urlPhoto=[@"http://citatas.biz/flats/uploads/" stringByAppendingString:[qItem valueForKey:@"status"]];//+id объявления
+    
+    for (int l=0; l<imagePath.count; l++) {//массив с путями фото формируется при выборе фото
         
-    urlPhoto=[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:imgName.lastObject];///имя фото надо переименовать!!!
-        //rename file
-        ///в формате id_j
-        //где j с 1
-        
+    urlPhoto=[[[urlPhoto stringByAppendingString:@"/"] stringByAppendingString:[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]]] stringByAppendingString:@".png"];
+        //rename file  в формате id_j
   //запрос на создание записи в таблице t_photos на сервере
     NSString *urlR=[NSString stringWithFormat: @"http://citatas.biz/flats/Api/create?photo=%@&id_flat=%@&photo=%@",@"photo",[qItem valueForKey:@"status"],urlPhoto];
         
     _rssParser = [[NSXMLParser alloc] initWithContentsOfURL:[NSURL URLWithString:urlR]];
-    
+        
     //методу передаем путь для размещения фото на сервере
     NSURL *urlRequest=[NSURL fileURLWithPath:urlPhoto];
     //и путь до фото на устройстве, который получаем из массива путей до фото
-    
-    [self uploadPhotos:urlRequest file:imagePath[l]];//метод добавляет фото на сервер
-  
-    }*/
+    //переименование полученного фото и получение пути до него на устройстве
+    NSString *photoName=[[[[qItem valueForKey:@"status"] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",l]] stringByAppendingString:@".png"];//id_l.png
+    NSString *imgName=[self renameFileFrom:imagePath[l] to:photoName];
+   
+        [self uploadPhotos:urlRequest file:[NSURL URLWithString:imgName]];//метод добавляет фото на сервер
+     
+        //добавление фото в папку DOCUMENTS
+        NSData *photoData = [NSData dataWithContentsOfFile:imgName];
+        NSString *filePathPhoto = [DOCUMENTS stringByAppendingPathComponent:photoName];
+        [photoData writeToFile:filePathPhoto atomically:YES];
+     
+        //занесение данных о фото в сущность EPhoto
+        NSManagedObject *newPhoto = [NSEntityDescription insertNewObjectForEntityForName:@"EPhoto" inManagedObjectContext:context];
+        long lastPhotoID=[appDelegate getLastID:@"EPhoto"];
+        [newPhoto setValue:[NSNumber numberWithLong: lastPhotoID ]forKey:@"id"];
+        [newPhoto setValue:[NSNumber numberWithLong: [[qItem valueForKey:@"status"] longValue] ]forKey:@"id_flat"];
+        [newPhoto setValue:filePathPhoto forKey:@"path"];
+        }//l++
+      }//this is the first record from this user
+    else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Увы!" message:@"Вы больше не можете добавлять объявления!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+    }
+
+     }//_bashItems.count!=0
+        }//все поля заполнены
+    else{
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Необходимо указать город, район и количество комнат!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
+    }
+}
+
+- (NSString *)renameFileFrom:(NSString*)oldPath to:(NSString *)newName
+{
+    NSString *newPath=[[oldPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:newName];
+    NSFileManager *fileMan = [NSFileManager defaultManager];
+    NSError *error = nil;
+    if (![fileMan moveItemAtPath:oldPath toPath:newPath error:&error])
+    {
+        NSLog(@"Failed to move '%@' to '%@': %@", oldPath, newPath, [error localizedDescription]);
+        return @"";
+    }
+    return newPath;
 }
 
 /////////////////////parser
@@ -497,7 +527,6 @@
         _currentProperty = elementName;
         return;
     }
-    
 }
 
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
@@ -523,47 +552,8 @@
         [_currentItem setValue:_currentValue forProperty:_currentProperty];
     }
     _currentValue = nil;
-    
 }
 
-
--(long)getLastID{
-    // получить ID последней записи в локальной БД
-    NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-    
-    NSFetchRequest *request = [[NSFetchRequest alloc] init];
-    NSEntityDescription *entity = [NSEntityDescription entityForName:@"EFlats" inManagedObjectContext:managedObjectContext];
-    [request setEntity:entity];
-    [request setResultType:NSDictionaryResultType];
-    NSExpression *keyPathExpression = [NSExpression expressionForKeyPath:@"id"];
-    
-    NSExpression *maxExpression = [NSExpression
-                                   expressionForFunction:@"max:" arguments:[NSArray arrayWithObject:keyPathExpression]];
-    
-    NSExpressionDescription *expressionDescription = [[NSExpressionDescription alloc] init];
-    
-    [expressionDescription setName:@"maxID"];
-    [expressionDescription setExpression:maxExpression];
-    [expressionDescription setExpressionResultType:NSInteger64AttributeType];
-    
-    [request setPropertiesToFetch:[NSArray arrayWithObject:expressionDescription]];
-    
-    // Выполнение запроса.
-    long lastId=0;
-    NSError *error = nil;
-    NSArray *objects = [managedObjectContext executeFetchRequest:request error:&error];
-    if (objects == nil) {
-        NSLog(@"Error has occured in reading from core data!!!");
-       }
-    else {
-        if ([objects count] > 0) {
-            
-            NSLog(@"Максимальный ID: %@", [[objects objectAtIndex:0] valueForKey:@"maxID"]);
-            lastId=[[[objects objectAtIndex:0] valueForKey:@"maxID"] integerValue];
-        }
-    }
-    return lastId;
-}
 #pragma mark - Image capture
 - (IBAction)takePicture:(UITapGestureRecognizer*)sender {
 	UIActionSheet *sheet;
@@ -601,11 +591,11 @@
 {
     UIAlertView *alert;
     if (error)
-        alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                           message:@"Unable to save image to Photo Album." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        alert = [[UIAlertView alloc] initWithTitle:@"Ошибка!"
+        message:@"Невозможно сохранить фото в галерее=(" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     else
-        alert = [[UIAlertView alloc] initWithTitle:@"Succes"
-                                           message:@"Image saved to Photo Album." delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
+        alert = [[UIAlertView alloc] initWithTitle:@"Ура!"
+        message:@"Фотография успешно сохранена в альбоме!" delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil];
     [alert show];
 }
 

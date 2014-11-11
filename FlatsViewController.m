@@ -16,10 +16,6 @@
     int tag;
 }
 @synthesize cityViewController;
-@synthesize btOne;
-@synthesize btRoom;
-@synthesize btTwo;
-@synthesize btThree;
 @synthesize myList;
 @synthesize btnLike;
 @synthesize rooms;
@@ -31,11 +27,8 @@
 @synthesize btnDelete;
 @synthesize cityName;
 @synthesize districtName;
-
-//////добавить обращение к сущности EPhoto, получить из нее пути и загружать фото по указанным путям
-//////////////////////
-
-
+@synthesize cValue;
+@synthesize mainPredicate;
 
 -(void)getPhotoFromCore:(int)flatIndex{
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
@@ -45,8 +38,8 @@
     [fetchRequest setPredicate:predicate];
     myPhoto=[[NSMutableArray alloc] init];
     myPhoto = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-
 }
+
 //////////////core data
 -(NSManagedObjectContext *)managedObjectContext{
     NSManagedObjectContext *context = nil;
@@ -68,7 +61,8 @@
 
 ///мультивыбор районов
 -(NSPredicate *)predicateForDistricts:(NSString *)district{
-    NSArray *districts=[district componentsSeparatedByString:@" "];
+    
+    NSArray *districts=[district componentsSeparatedByString:@", "];
 
     NSPredicate *districtPredicate;
     NSPredicate *resultPredicate=[NSPredicate predicateWithFormat:@"(place LIKE %@)",districts[0]];
@@ -92,76 +86,58 @@
     return resultPredicate;
 }
 
+-(void)makeRoomsPredicate{
+    NSArray *room=[rooms componentsSeparatedByString:@"/"];
+    
+    NSPredicate *roomPredicate;
+    mainPredicate=nil;
+    for (int y=0; y<room.count; y++) {
+        if ([room[y] isEqualToString:@"3-к квартира"]) {
+            NSString *roomsF=@"4-к квартира";
+            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@) OR (rooms LIKE %@)",room[y],roomsF];
+        }
+        else{
+            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@)",room[y]];
+        }
+        if (mainPredicate!=nil) {
+            mainPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate,roomPredicate, nil]];
+        }else{
+            mainPredicate=roomPredicate;
+        }
+    }
+}
+
 //////////////getting records from core data
 -(void)getFlatsFromCore:(NSString *)room is_liked:(int)is_liked{
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"EFlats"];
 
-    NSPredicate *predicate;
-    NSIndexPath *indexPath;
-    indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-    NSString *city=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    /////обращение к ячейке по индексу!!!!
-   indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    NSString *district=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    
-
-    if (is_liked!=0) { //is_favorite in dataModel
-        if ([rooms isEqualToString: @"3-к квартира"]) {
-            NSString *roomsF=@"4-к квартира";
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@)AND (rooms LIKE %@ OR rooms LIKE %@) AND (is_favorite==%d)",city,room, roomsF,1];
-        }else if(rooms==nil){
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (is_favorite==%d)",city,1];
-        }else{
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (rooms LIKE %@) AND (is_favorite==%d)",city,room,1];
-        }
-    }
-    else{
-        if (([rooms isEqualToString: @"3-к квартира"])) {
-            NSString *roomsF=@"4-к квартира";
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (rooms LIKE %@ OR rooms LIKE %@)",city,room, roomsF];
-        }
-        else if(rooms==nil){
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@)",city];
-        }
-        else{
-            predicate=[NSPredicate predicateWithFormat:@"(city LIKE %@) AND (rooms LIKE %@)",city,room];
-      }
-    }
-
-    
-    if (![district isEqualToString: @"Выберите район"]) {//если район выбран включаем его в предикат
-        //иначе показываем все объявления для выбранного города
-        predicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate,[self predicateForDistricts:district], nil]];
+    NSPredicate *predicate=[NSPredicate predicateWithFormat:@"city LIKE %@",cityName];
+    //NSLog(@"%@",predicate);
+    [self makeRoomsPredicate];
+    mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate,mainPredicate, nil]];
+    if (is_liked==1) {
+        NSPredicate *likePredicate=[NSPredicate predicateWithFormat:@"(is_favorite==%d)",1];
+        mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, likePredicate, nil]];
     }
     
-    NSLog([NSString stringWithFormat:@"%@",predicate]);
-    [fetchRequest setPredicate:predicate];
+    if(![districtName isEqualToString:@"Все районы"]){
+        mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, [self predicateForDistricts:districtName], nil]];
+    }
+    
+    NSLog(@"%@",mainPredicate);
+    [fetchRequest setPredicate:mainPredicate];
     
     self.myList = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    [self.tableView reloadData];
-    /////при обновлении таблицы сохраняем выбранные ранее город и район
-    indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-    [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=city;
-    indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=district;
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
--(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs isCity:(BOOL)isCity
+-(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs district:(NSString *)districtNameIs valueIs:(int)value
 {
-    if(isCity){
-        NSIndexPath *dIndexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    [self.tableView cellForRowAtIndexPath:dIndexPath].textLabel.text=@"Выберите район";
-    [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityNameIs;
-        [self getFlatsFromCore:rooms is_liked:0];
-    }
-     else{
-        [self.tableView cellForRowAtIndexPath:self.tableView.indexPathForSelectedRow].textLabel.text=cityNameIs;
-        NSArray *districts=[cityNameIs componentsSeparatedByString:@" "];
-        if (districts.count>=1) {  ///вызов функции загрузки из БД
-        [self getFlatsFromCore:rooms is_liked:0];
-       }
-    }
+    cityName=cityNameIs;
+    districtName=districtNameIs;
+    cValue=value;//для перехода к выбору районов или метро
+    [self getFlatsFromCore:rooms is_liked:0];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
@@ -187,6 +163,7 @@
     [super viewDidLoad];
     self.navigationItem.leftBarButtonItem=nil;
     self.navigationItem.hidesBackButton=YES;
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
     id appDelegate = [[UIApplication sharedApplication] delegate];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     UILabel *labelView = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
@@ -202,20 +179,12 @@
         
         [headerView addSubview:labelView];
     }
+    cityName=@"Москва";
+    districtName=@"Все районы";
+    cValue=1;//по умолчанию выбор районов
+    rooms=@"Комната";
     
     self.tableView.tableHeaderView = headerView;
-    /*if (rooms==nil) {
-        rooms=@"Комната";
-    }*/
-    NSIndexPath *indexPath;
-    if ((cityName!=nil)&&(districtName!=nil)) {//значения переменным присваиваются в MenuViewController для сохранения выбранных фильтров
-      indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-      [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=cityName;
-      indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-      [self.tableView cellForRowAtIndexPath:indexPath].textLabel.text=districtName;
-    }
-    
-    [self getFlatsFromCore:rooms is_liked: 0];
     [self segControlChange:self.segControl];////????
 }
 
@@ -255,7 +224,7 @@
     cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
 
     if (indexPath.section==0) {
-         [self configureCell:cell atIndex:indexPath];
+         [self configureCell:cell atIndex:indexPath cityName:cityName districtName:districtName];
     }
     else{
         [self configureAnotherCell:cell atIndex:indexPath];
@@ -302,8 +271,6 @@
     cell.accessoryType=0;
     UIView *cellView = cell.contentView;
     
-    
-    
     NSManagedObject *listItem=[myList objectAtIndex:indexPath.row];
    lblRooms = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 20)];
     lblRooms.backgroundColor = [UIColor clearColor];
@@ -316,7 +283,6 @@
     lblDistrict.backgroundColor = [UIColor clearColor];
     [lblDistrict setText:[listItem valueForKey:@"place"]];
     [cellView addSubview:lblDistrict];
- 
     
     tvDescript = [[UITextView alloc]initWithFrame:CGRectMake(20, 40, (cellView.frame.size.width), ([self tableView:[self tableView] heightForRowAtIndexPath:indexPath]-50))];
     [tvDescript setUserInteractionEnabled:NO];
@@ -326,8 +292,6 @@
     tvDescript.text=[listItem valueForKey:@"descript"];
     tvDescript.delegate=self;
     [cellView addSubview:tvDescript];
-    
-    
     
     /*if ([listItem valueForKey:@"descript"]!=nil) {
     height=[self tableView:[self tableView] heightForRowAtIndexPath:indexPath];
@@ -340,6 +304,7 @@
     [self getPhotoFromCore:[[listItem valueForKey:@"id"] integerValue]];
     
     NSManagedObject *photoItem;
+    
         for (int j=0; j<myPhoto.count; j++) {//j<myPhoto.count
         photoItem=[myPhoto objectAtIndex:j];//перебираем все фото принадлежащие выбранной квартире
         //////////core data-path=photo(server)
@@ -358,14 +323,10 @@
         
         tap.delegate=self;
         [imageView addGestureRecognizer:tap];
-        
     }
-   
-    //set content size of you scrollView to the imageView height
+   //set content size of you scrollView to the imageView height
     [scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 50)];//imageView.frame.size.height
-    
     [cellView addSubview:scrollView];
-    
     
     btnLike = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect btnThree = CGRectMake(260, 0, 25, 25);
@@ -392,7 +353,7 @@
 //////gesture
 -(void) didTapOnImageView:(UIGestureRecognizer*) recognizer {
     [recognizer locationInView:recognizer.view];
-    NSLog(@"%d",recognizer.view.tag);
+    //NSLog(@"%d",recognizer.view.tag);
     tag=recognizer.view.tag;
    [self performSegueWithIdentifier:@"photo" sender:self];
 
@@ -404,54 +365,51 @@
 }
 
 /////////////configuring cells in the first section
-- (void)configureCell:(UITableViewCell*)cell atIndex:(NSIndexPath*)indexPath {
-    
+- (void)configureCell:(UITableViewCell*)cell atIndex:(NSIndexPath*)indexPath cityName:(NSString *)city districtName:(NSString *)district {
+    //cell.backgroundColor=[UIColor lightGrayColor];
     switch (indexPath.row) {
         case 0:{
-            cell.textLabel.text=@"Москва";
+            cell.textLabel.text=city;
             cell.accessoryType=1;
             break;
         }
         case 1:{
-            cell.textLabel.text=@"Бутово";
+            cell.textLabel.text=district;
             cell.accessoryType=1;
             break;
         }
         case 2:{
             cell.accessoryType=0;
             UIView *cellView = cell.contentView;
-            /////комната
-            btRoom = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            CGRect btnRoom = CGRectMake(0, 0, 100, 40);
-            [btRoom setFrame:btnRoom];
-            [btRoom setTitle:@"Комната" forState:UIControlStateNormal];
-            [btRoom  addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
-            [cellView addSubview:btRoom];
-            btRoom.tag=0;
-            ///////1-комн
-            btOne = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            CGRect btnOne = CGRectMake(70, 0, 100, 40);
-            [btOne setFrame:btnOne];
-            [btOne setTitle:@"1-комн." forState:UIControlStateNormal];
-            [btOne addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
-            btOne.tag=1;
-            [cellView addSubview:btOne];
-            ///////////2-
-            btTwo = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            CGRect btnTwo = CGRectMake(140, 0, 100, 40);
-            [btTwo setFrame:btnTwo];
-            [btTwo setTitle:@"2-комн." forState:UIControlStateNormal];
-            [btTwo addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
-            btTwo.tag=2;
-            [cellView addSubview:btTwo];
-            //////////
-            btThree = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-            CGRect btnThree = CGRectMake(210, 0, 100, 40);
-            [btThree setFrame:btnThree];
-            [btThree setTitle:@"3+комн." forState:UIControlStateNormal];
-            [btThree addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
-            btThree.tag=3;
-            [cellView addSubview:btThree];
+        
+            for (int y=0; y<4; y++) {//buttons
+              UIButton  *btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+                CGRect btnRec = CGRectMake(y*75, 0, 100, 40);
+                [btn setFrame:btnRec];
+                switch (y) {
+                    case 0:
+                        [btn setTitle:@"Комната" forState:UIControlStateNormal];
+                        break;
+                    case 1:
+                        [btn setTitle:@"1-комн." forState:UIControlStateNormal];
+                        break;
+                    case 2:
+                        [btn setTitle:@"2-комн." forState:UIControlStateNormal];
+                        break;
+                    case 3:
+                        [btn setTitle:@"3+комн." forState:UIControlStateNormal];
+                        break;
+                    default:
+                        break;
+                }
+               
+                [btn addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
+                [cellView addSubview:btn];
+                btn.tag=y;
+                if ([btn.titleLabel.text isEqualToString:rooms]) {
+                    [btn setHighlighted:YES];
+                }
+            }
             break;
         }
         default:
@@ -462,13 +420,16 @@
 -(void)btnLikeClick:(UIButton*)sender{
     NSManagedObjectContext *context = [self managedObjectContext];
     NSManagedObject *item=[self.myList objectAtIndex:sender.tag];
-    // NSLog([NSString stringWithFormat:@"%d", self.tableView.indexPathForSelectedRow.row ] );
     if ([item valueForKey:@"is_favorite"]==[NSNumber numberWithInt:1] ) {
         [item setValue:[NSNumber numberWithInt:0] forKey:@"is_favorite"];
         
     }else{
         [item setValue:[NSNumber numberWithInt:1] forKey:@"is_favorite"];
     }
+    [self saveChangesInCoreData:context];
+    }
+
+-(void)saveChangesInCoreData:(NSManagedObjectContext *)context{
     // Сохраняем изменения
     NSError *error;
     if (![context save:&error]) {
@@ -477,7 +438,6 @@
     }
 
 }
-
 -(void)btnDeleteClick:(UIButton *)sender{
     // Удаляем выделенный пункт
     NSManagedObjectContext *context = [self managedObjectContext];
@@ -496,33 +456,41 @@
     NSIndexPath *indPath=[NSIndexPath indexPathForRow:sender.tag inSection:1];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indPath]
                           withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView reloadData];
-    // Сохраняем изменения
-    NSError *error;
-    if (![context save:&error]) {
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self saveChangesInCoreData:context];
 }
 
+-(void)makeBtnActions:(UIButton *)sender room:(NSString *)room {
+    if (sender.selected) {
+        rooms=[rooms stringByReplacingOccurrencesOfString:[room stringByAppendingString:@"/"]withString:@""];
+        rooms=[rooms stringByReplacingOccurrencesOfString:[@"/" stringByAppendingString:room] withString:@""];
+        sender.selected=NO;
+        sender.highlighted=NO;
+    }
+    else{
+        sender.selected=YES;
+        rooms=[[rooms stringByAppendingString:@"/"] stringByAppendingString:room];
+    }
+
+}
 
 - (void) buttonActions:(UIButton*)sender {
 
         switch (sender.tag) {
         case 0:
-            rooms=@"Комната";
+            [self makeBtnActions:sender room:@"Комната"];
             [self segControlChange:sender];
             break;
         case 1:
-            rooms=@"1-к квартира";
+            [self makeBtnActions:sender room:@"1-к квартира"];
             [self segControlChange:sender];
             break;
         case 2:
-            rooms=@"2-к квартира";
+            [self makeBtnActions:sender room:@"2-к квартира"];
             [self segControlChange:sender];
             break;
         case 3:
-            rooms=@"3-к квартира";
+            [self makeBtnActions:sender room:@"3-к квартира"];
             [self segControlChange:sender];
             break;
         
@@ -530,36 +498,6 @@
             break;
     
     }
-}
-
-
-// Override to support conditional editing of the table view.
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return YES;
-}
-///////УДАЛИТЬ ПОТОМ!!!!!!!!!!////////////
-// Override to support editing the table view.
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        // Delete the row from the data source
-        // Удаляем выделенный пункт
-        NSManagedObjectContext *context = [self managedObjectContext];
-        [context deleteObject:[self.myList objectAtIndex:indexPath.row]];
-        [self.myList removeObject:[self.myList objectAtIndex:indexPath.row]];
-        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-                         withRowAnimation:UITableViewRowAnimationFade];
-        // Сохраняем изменения
-        NSError *error;
-        if (![context save:&error]) {
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
-        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-    }   
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -575,12 +513,6 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    
-    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
-    NSString *cityNameIs=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    indexPath=[NSIndexPath indexPathForRow:1 inSection:0];
-    NSString *districtNameIs=[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text;
-    
    if ([segue.identifier isEqualToString:@"city"]) {
 
     if (self.tableView.indexPathForSelectedRow.section==0) {
@@ -588,19 +520,32 @@
         UIBarButtonItem *backButton=[[UIBarButtonItem alloc] init];
         backButton.title=@"Поиск";
         self.navigationItem.backBarButtonItem=backButton;
-        upcoming.cityName=cityNameIs;
+       // upcoming.cityName=cityName;
+       // upcoming.districtName=districtName;
         
     switch ([self.tableView.indexPathForSelectedRow row]) {
             case 0:{
                 upcoming.title=@"Выбор города";
-                upcoming.cValue=@"0";
+                upcoming.cityName=cityName;
+                upcoming.districtName=districtName;
+                upcoming.cValue=0;
                 upcoming.delegate = self;
                 break;
             }
             case 1:{
-                upcoming.title=@"Выбор района";
-                upcoming.cValue=@"1";
-                upcoming.delegate = self;
+                if (cValue!=3) {
+                    upcoming.title=@"Выбор района";
+                    upcoming.cityName=cityName;
+                    upcoming.districtName=districtName;
+                    upcoming.cValue=1;
+                    upcoming.delegate = self;
+                }else{
+                    upcoming.title=@"Выбор метро";
+                    upcoming.cityName=cityName;
+                    upcoming.districtName=districtName;
+                    upcoming.cValue=3;
+                    upcoming.delegate = self;
+                }
                 break;
             }
             default:
@@ -612,16 +557,8 @@
         PhotosViewController *upcoming=segue.destinationViewController;
 
        NSManagedObject *item=[myList objectAtIndex:self.tableView.indexPathForSelectedRow.row];
-            NSString *imgPath=[[[[NSString stringWithFormat:@"%d",[[item valueForKey:@"id"] integerValue]] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",tag]] stringByAppendingString:@".png"];
-            
-        NSString *imgName= [DOCUMENTS stringByAppendingPathComponent:imgPath];//documents/id объявления_j.png
-        NSData *imgData = [NSData dataWithContentsOfFile:imgName];
-            
-        UIImage *img=[UIImage imageWithData:imgData];
-            
 
         upcoming.photoID=[[item valueForKey:@"id"] integerValue];
-        upcoming.image=img;
         upcoming.tag=tag;//индекс выбранного фото
         [self getPhotoFromCore:[[item valueForKey:@"id"] integerValue]];
         upcoming.photoCount=myPhoto.count;//количество фото
@@ -631,16 +568,12 @@
     }
     
   else if ([segue.identifier isEqualToString:@"menu"]) {
-       /* UIBarButtonItem *backButton=[[UIBarButtonItem alloc] init];
-        backButton.title=@"Назад";
-        self.navigationItem.backBarButtonItem=backButton;*/
       MenuViewController *upcoming=segue.destinationViewController;
-      upcoming.cityName=cityNameIs;
-      upcoming.districtName=districtNameIs;
+      upcoming.cityName=cityName;
+      upcoming.districtName=districtName;
       upcoming.rooms=rooms;
       upcoming.navigationController.navigationItem.hidesBackButton=YES;
-      //upcoming.delegate=self;
-    }
+     }
   
 }
 - (IBAction)segControlChange:(id)sender {

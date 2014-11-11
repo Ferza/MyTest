@@ -15,6 +15,8 @@
 @property (nonatomic, retain) NSString *city_name;
 @property (nonatomic, retain) NSString *district_name;
 @property (nonatomic,retain)NSString *status;
+@property (nonatomic,retain) NSString *subway_name;
+@property (nonatomic, retain) NSString *subway_id;
 
 -(void) setValue:(NSString*)value forProperty:(NSString*)property;
 @end

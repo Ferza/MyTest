@@ -24,6 +24,7 @@
 		5C9010B319F8C377003863D7 /* KeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010AE19F8C377003863D7 /* KeychainWrapper.m */; };
 		5C9010B419F8C377003863D7 /* NSString+APGenerate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010B019F8C377003863D7 /* NSString+APGenerate.m */; };
 		5C9010B519F8C377003863D7 /* NSString+APMD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010B219F8C377003863D7 /* NSString+APMD5.m */; };
+		5C90E63B1A0F83F4003F2CD0 /* NewFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */; };
 		5C9240DF19FD5E3F0085B3A6 /* PhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9240DE19FD5E3F0085B3A6 /* PhotosViewController.m */; };
 		5C96C6A319FFFB0900BBD684 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C96C6A219FFFB0900BBD684 /* MenuViewController.m */; };
 		5C980A491A0010CD0036CA13 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A371A0010CD0036CA13 /* AFHTTPRequestOperation.m */; };
@@ -42,6 +43,7 @@
 		5CA61E6F19EE7FB800F4D0A4 /* CItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA61E6E19EE7FB800F4D0A4 /* CItem.m */; };
 		5CA8B0481A00003100FA7E96 /* FastSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA8B0471A00003100FA7E96 /* FastSegue.m */; };
 		5CAADA1B1A094480005D41DD /* CoreFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */; };
+		5CB02CCC1A10803000811786 /* DataFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CB02CCA1A10803000811786 /* DataFlats.xcdatamodeld */; };
 		5CB5C21B19E462B700BB5F7E /* QItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5C21A19E462B700BB5F7E /* QItem.m */; };
 		5CB7B1231A000AF200AE3261 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7B1221A000AF200AE3261 /* HelpViewController.m */; };
 /* End PBXBuildFile section */
@@ -81,6 +83,7 @@
 		5C9010B019F8C377003863D7 /* NSString+APGenerate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+APGenerate.m"; sourceTree = "<group>"; };
 		5C9010B119F8C377003863D7 /* NSString+APMD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+APMD5.h"; sourceTree = "<group>"; };
 		5C9010B219F8C377003863D7 /* NSString+APMD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+APMD5.m"; sourceTree = "<group>"; };
+		5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NewFlats.xcdatamodel; sourceTree = "<group>"; };
 		5C9240DD19FD5E3F0085B3A6 /* PhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosViewController.h; sourceTree = "<group>"; };
 		5C9240DE19FD5E3F0085B3A6 /* PhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosViewController.m; sourceTree = "<group>"; };
 		5C96C6A119FFFB0900BBD684 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
@@ -116,6 +119,7 @@
 		5CA8B0461A00003100FA7E96 /* FastSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSegue.h; sourceTree = "<group>"; };
 		5CA8B0471A00003100FA7E96 /* FastSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastSegue.m; sourceTree = "<group>"; };
 		5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreFlats.xcdatamodel; sourceTree = "<group>"; };
+		5CB02CCB1A10803000811786 /* DataFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataFlats.xcdatamodel; sourceTree = "<group>"; };
 		5CB5C21919E462B700BB5F7E /* QItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QItem.h; sourceTree = "<group>"; };
 		5CB5C21A19E462B700BB5F7E /* QItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QItem.m; sourceTree = "<group>"; };
 		5CB7B1211A000AF200AE3261 /* HelpViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpViewController.h; sourceTree = "<group>"; };
@@ -179,16 +183,15 @@
 		5C342DB319E15DFE00D29CA2 /* Flats */ = {
 			isa = PBXGroup;
 			children = (
+				5C90E6351A0F6744003F2CD0 /* img */,
 				5C980A351A0010CD0036CA13 /* AFNetworking */,
 				5C9010AD19F8C377003863D7 /* KeychainWrapper.h */,
 				5C9010AE19F8C377003863D7 /* KeychainWrapper.m */,
 				5C9010AF19F8C377003863D7 /* NSString+APGenerate.h */,
 				5C9010B019F8C377003863D7 /* NSString+APGenerate.m */,
-				5CA1A4E31A07F6EE00AA689C /* trash.png */,
 				5C9010B119F8C377003863D7 /* NSString+APMD5.h */,
 				5C9010B219F8C377003863D7 /* NSString+APMD5.m */,
 				5C342DBC19E15DFE00D29CA2 /* AppDelegate.h */,
-				5C3298A819F4232F000B5C5D /* 5959_29.png */,
 				5C342DBD19E15DFE00D29CA2 /* AppDelegate.m */,
 				5C342DBF19E15DFE00D29CA2 /* Main.storyboard */,
 				5C342DC519E15DFE00D29CA2 /* Images.xcassets */,
@@ -212,6 +215,8 @@
 				5CB7B1211A000AF200AE3261 /* HelpViewController.h */,
 				5CB7B1221A000AF200AE3261 /* HelpViewController.m */,
 				5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */,
+				5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */,
+				5CB02CCA1A10803000811786 /* DataFlats.xcdatamodeld */,
 			);
 			path = Flats;
 			sourceTree = "<group>";
@@ -243,6 +248,15 @@
 				5C342DD519E15DFE00D29CA2 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5C90E6351A0F6744003F2CD0 /* img */ = {
+			isa = PBXGroup;
+			children = (
+				5CA1A4E31A07F6EE00AA689C /* trash.png */,
+				5C3298A819F4232F000B5C5D /* 5959_29.png */,
+			);
+			name = img;
 			sourceTree = "<group>";
 		};
 		5C980A351A0010CD0036CA13 /* AFNetworking */ = {
@@ -370,10 +384,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CB02CCC1A10803000811786 /* DataFlats.xcdatamodeld in Sources */,
 				5C9FDFE019EC2CF80007E2F7 /* CitiesViewController.m in Sources */,
 				5C9240DF19FD5E3F0085B3A6 /* PhotosViewController.m in Sources */,
 				5C9FDFDD19EC2C090007E2F7 /* FlatsViewController.m in Sources */,
 				5C980A4B1A0010CD0036CA13 /* AFHTTPSessionManager.m in Sources */,
+				5C90E63B1A0F83F4003F2CD0 /* NewFlats.xcdatamodeld in Sources */,
 				5CA61E6F19EE7FB800F4D0A4 /* CItem.m in Sources */,
 				5CAADA1B1A094480005D41DD /* CoreFlats.xcdatamodeld in Sources */,
 				5C980A4C1A0010CD0036CA13 /* AFNetworkReachabilityManager.m in Sources */,
@@ -616,6 +632,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */,
+			);
+			currentVersion = 5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */;
+			path = NewFlats.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
@@ -623,6 +649,16 @@
 			);
 			currentVersion = 5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */;
 			path = CoreFlats.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+		5CB02CCA1A10803000811786 /* DataFlats.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5CB02CCB1A10803000811786 /* DataFlats.xcdatamodel */,
+			);
+			currentVersion = 5CB02CCB1A10803000811786 /* DataFlats.xcdatamodel */;
+			path = DataFlats.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
 		};

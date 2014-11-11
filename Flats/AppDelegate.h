@@ -22,6 +22,7 @@
     NSString* _currentProperty;
     NSMutableString* _currentValue;
     int i;
+    NSString *uuid;
 }
 
 @property (strong, nonatomic) UIWindow *window;
@@ -30,12 +31,10 @@
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (strong,nonatomic)NSString *uuid;
-@property UIImage *image ;
 @property NSString *days;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 -(long)getLastID:(NSString*)entityName;
-
+-(NSString *)getUUID;
 @end

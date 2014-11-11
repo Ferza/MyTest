@@ -23,10 +23,6 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *segControl;
 - (IBAction)segControlChange:(id)sender;
 
-@property UIButton *btThree;
-@property UIButton *btOne;
-@property UIButton *btTwo;
-@property UIButton *btRoom;
 @property UIButton *btnLike;
 @property UIButton *btnDelete;
 @property NSString *rooms;
@@ -34,9 +30,12 @@
 @property UILabel *lblDistrict;
 @property UILabel *lblDescript;
 @property UITextView *tvDescript;
+@property (strong, nonatomic) NSString *cityName;
+@property (strong, nonatomic) NSString *districtName;
 
 @property (strong, nonatomic) IBOutlet UIButton *btnElse;
 - (IBAction)btnElseClick:(id)sender;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
-
+@property int cValue;
+@property (strong, nonatomic) NSPredicate *mainPredicate;
 @end

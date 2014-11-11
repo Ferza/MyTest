@@ -26,11 +26,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
@@ -54,20 +50,6 @@
     if (section==1) {
         result=3;
     }
-   /* switch (section) {
-        case 0:
-            result=2;
-            break;
-        case 1:
-            result=3;
-            break;
-        case 2:
-            result=2;
-            break;
-        default:
-            break;
-    }*/
-    // Return the number of rows in the section.
     return result;
 }
 

@@ -13,7 +13,7 @@
 #import "AFNetworking.h"
 
 
-@interface AddViewController : UITableViewController<UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate, UITextViewDelegate, UITextFieldDelegate,NSXMLParserDelegate>{
+@interface CreateViewController : UITableViewController<UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate, UITextViewDelegate, UITextFieldDelegate,NSXMLParserDelegate>{
     NSXMLParser * _rssParser;
     QItem * _currentItem;
     NSMutableArray * _bashItems;
@@ -33,11 +33,7 @@
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tap;
 @property (strong, nonatomic) IBOutlet UITextField *tfPrice;
-@property (strong, nonatomic) NSString *cityName;
-@property (strong, nonatomic) NSString *districtName;
-@property (strong, nonatomic) NSString *rooms;
-@property int cValue;
-@property NSIndexPath *roomsIndex;
+
 - (IBAction)takePicture:(id)sender;
 
 @end

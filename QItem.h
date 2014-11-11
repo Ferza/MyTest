@@ -28,6 +28,7 @@
 @property (nonatomic, retain) NSString *path;
 @property (nonatomic, retain) NSString *days;
 
+
 -(void) setValue:(NSString*)value forProperty:(NSString*)property;
 
 

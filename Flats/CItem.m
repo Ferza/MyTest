@@ -15,6 +15,8 @@
 @synthesize id_city;
 @synthesize district_id;
 @synthesize status;
+@synthesize subway_name;
+@synthesize subway_id;
 
 -(void) setValue:(NSString*)value forProperty:(NSString*)property
 {
@@ -36,7 +38,12 @@
     if ([property isEqualToString:@"status"]) {
         status=value;
     }
-   
+    if ([property isEqualToString:@"subway_name"]) {
+        subway_name=value;
+    }
+    if ([property isEqualToString:@"subway_id"]) {
+        subway_id=value;
+    }
 }
 
 @end

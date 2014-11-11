@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>13D6B766-CA8C-4AD4-996F-462D6481B14E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Flats</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3B67D13F-0692-4350-ADC0-3EBC2E835D54</key>
+		<string>https://github.com/Ferza/MyTest.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Flats.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3B67D13F-0692-4350-ADC0-3EBC2E835D54</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Ferza/MyTest.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3B67D13F-0692-4350-ADC0-3EBC2E835D54</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3B67D13F-0692-4350-ADC0-3EBC2E835D54</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MyTest</string>
+		</dict>
+	</array>
+</dict>
+</plist>

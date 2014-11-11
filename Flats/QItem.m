@@ -24,6 +24,7 @@
 @synthesize path;
 @synthesize days;
 
+
 //доделать!!!!!
 -(void) setValue:(NSString*)value forProperty:(NSString*)property
 {
@@ -76,6 +77,7 @@
     if ([property isEqualToString:@"days"]) {
         days=value;
     }
+
     //  _publication=value;
     
     

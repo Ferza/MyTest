@@ -7,6 +7,7 @@
     <entity name="EDistrict" syncable="YES">
         <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="id_city" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="is_selected" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="EFlats" syncable="YES">
@@ -27,10 +28,17 @@
         <attribute name="id_flat" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
         <attribute name="path" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="ESubway" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="id_city" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="is_selected" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <elements>
         <element name="EFlats" positionX="0" positionY="0" width="0" height="0"/>
         <element name="ECity" positionX="0" positionY="0" width="0" height="0"/>
         <element name="EDistrict" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ESubway" positionX="0" positionY="0" width="0" height="0"/>
         <element name="EPhoto" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

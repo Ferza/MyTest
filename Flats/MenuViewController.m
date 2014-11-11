@@ -31,6 +31,11 @@
 {
     //[self performSegueWithIdentifier:@"FastSegue" sender:nil];
     [super viewDidLoad];
+    [self.tableView setBackgroundColor:[UIColor darkGrayColor]];
+    self.tableView.opaque=YES;
+    self.navigationItem.leftBarButtonItem=nil;
+    self.navigationItem.hidesBackButton=YES;
+    [self.navigationController.navigationBar setBarTintColor:[UIColor darkGrayColor]];
 }
 
 
@@ -61,7 +66,11 @@
     if(cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIndetfier];
     }
-
+    cell.backgroundColor=[UIColor darkGrayColor];
+    cell.textLabel.textColor=[UIColor whiteColor];
+    [cell.textLabel setTextAlignment:NSTextAlignmentNatural];
+    cell.textLabel.textAlignment = NSTextAlignmentJustified;
+    cell.opaque=YES;
     switch (indexPath.row) {
         case 0:
             cell.textLabel.text=@"Поиск квартир";
@@ -86,15 +95,10 @@
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat h=50;
-    switch (indexPath.row) {
-        case 2:
-             h=h*2;
-            break;
-        case 3:
-            h=h*3;
-            break;
-        default:
-            break;
+    if ((indexPath.row==0)||(indexPath.row==2)) {
+        h*=2;
+    }else if(indexPath.row==3){
+        h*=3;
     }
     return h;
 }
@@ -103,10 +107,8 @@
     switch (indexPath.row) {
         case 0:
             [self performSegueWithIdentifier:@"flats" sender:self];
-            [self.delegate getParams:self city:cityName district:districtName rooms:rooms favorite:0];
             break;
         case 1:
-            [self.delegate getParams:self city:cityName district:districtName rooms:rooms favorite:1];
             [self performSegueWithIdentifier:@"favorite" sender:self];
             break;
         case 2:
@@ -173,14 +175,18 @@
     if ([segue.identifier isEqualToString:@"flats"]) {
        FlatsViewController *upcoming = segue.destinationViewController;
         upcoming.segControl.selectedSegmentIndex=0;
+        upcoming.cityName=cityName;
+        upcoming.districtName=districtName;
+        upcoming.rooms=rooms;
     }
     if ([segue.identifier isEqualToString:@"favorite"]) {
         FlatsViewController *upcoming = segue.destinationViewController;
         upcoming.segControl.selectedSegmentIndex=1;
+        upcoming.cityName=cityName;
+        upcoming.districtName=districtName;
+        upcoming.rooms=rooms;
     }
   
 }
-
-
 
 @end

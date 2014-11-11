@@ -177,15 +177,10 @@
         [self getImg:(tag+1)];
         [myImages addObject:image];
 
-       // NSString *imgName= [[NSString stringWithFormat:@"%d",photoID]stringByAppendingString:[NSString stringWithFormat:@"%d",tag]];
-        
-        //UIImage *img=[UIImage imageNamed:[imgName stringByAppendingString:@".png"]];
-        /////
         NSString *imgP=[[[[NSString stringWithFormat:@"%d",photoID] stringByAppendingString:@"_"] stringByAppendingString:[NSString stringWithFormat:@"%d",tag]] stringByAppendingString:@".png"];
         
         NSString *imgName= [DOCUMENTS stringByAppendingPathComponent:imgP];//documents/id объявления_j.png
         
-    
         NSData *imgData = [NSData dataWithContentsOfFile:imgName];
         
         UIImage *img=[UIImage imageWithData:imgData];

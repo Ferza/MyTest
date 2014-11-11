@@ -14,9 +14,10 @@
 
 @protocol CitiesViewControllerDelegate 
 
--(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityName isCity:(BOOL)isCity;
+-(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs district:(NSString *)districtNameIs valueIs:(int)value;
+-(void)getDistrictName:(CitiesViewController*)controller district:(NSString*)districtNameIs valueIs:(int)value;
 
--(void)getRooms:(CitiesViewController*)controller rooms:(NSString*)rooms;
+-(void)getRooms:(CitiesViewController*)controller rooms:(NSString*)roomsCount index:(NSIndexPath *)indexPath;
 @end
 
 @interface CitiesViewController : UITableViewController<NSXMLParserDelegate>{
@@ -28,12 +29,16 @@
     NSString* _currentProperty;
     NSMutableString* _currentValue;
     NSIndexPath *lastIndexPath;
-    NSString *DistrictName;
 }
 @property (strong, nonatomic) NSMutableArray *myList;
-@property (strong, nonatomic) NSString *cValue;
 @property (nonatomic, weak) id  delegate;
 @property (strong, nonatomic) NSString *cityName;
+- (IBAction)btnSubwayClick:(id)sender;
 @property (strong, nonatomic) NSString *addVC;
-@property (strong, nonatomic) NSString *district;
+@property (strong, nonatomic) IBOutlet UIButton *btnSubway;
+@property (strong, nonatomic) NSString *districtName;
+@property int cValue;
+//@property UIButton *radioBtn;
+@property (strong, nonatomic) NSIndexPath *roomsIndex;
+
 @end

@@ -23,10 +23,6 @@
 @property (strong, nonatomic) IBOutlet UISegmentedControl *segControl;
 - (IBAction)segControlChange:(id)sender;
 
-@property UIButton *btThree;
-@property UIButton *btOne;
-@property UIButton *btTwo;
-@property UIButton *btRoom;
 @property UIButton *btnLike;
 @property UIButton *btnDelete;
 @property NSString *rooms;
@@ -40,5 +36,6 @@
 @property (strong, nonatomic) IBOutlet UIButton *btnElse;
 - (IBAction)btnElseClick:(id)sender;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;
-
+@property int cValue;
+@property (strong, nonatomic) NSPredicate *mainPredicate;
 @end
