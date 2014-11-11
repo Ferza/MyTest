@@ -406,9 +406,6 @@
                 [btn addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
                 [cellView addSubview:btn];
                 btn.tag=y;
-                if ([btn.titleLabel.text isEqualToString:rooms]) {
-                    [btn setHighlighted:YES];
-                }
             }
             break;
         }
