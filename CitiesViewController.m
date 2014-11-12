@@ -271,7 +271,7 @@ i=0;
             self.btnSubway.hidden=true;
             [self getDataFromServer];
             [self getDataFromCore];
-            lastIndexPath=[NSIndexPath indexPathForRow:0 inSection:0];
+            //lastIndexPath=[NSIndexPath indexPathForRow:0 inSection:0];
         }else{
             if (cityName!=nil) {
                 [self getDataFromServer];
@@ -367,6 +367,10 @@ i=0;
         switch (cValue) {//если значение поля is_selected ==1, то отмечаем галочкой запись
             case 0:{
                 [self cellConfig:cell cellIndex:indexPath.row];
+                if ([cityName isEqualToString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text]) {
+                    cell.accessoryType=UITableViewCellAccessoryCheckmark;
+                    [self setIsSelected:indexPath.row isSelected:1];/////
+                }
             }
                 break;
             case 1:{
@@ -379,7 +383,8 @@ i=0;
                             [self setIsSelected:indexP.row isSelected:0];/////
                         }
                     }
-                }else{
+                }
+                else{
                     [self cellConfig:cell cellIndex:indexPath.row];
                 }
             }
@@ -475,8 +480,7 @@ i=0;
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
-    return YES;
+  return YES;
 }
 
 // Override to support editing the table view.
@@ -496,8 +500,7 @@ i=0;
             NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
             abort();
         }
-
-    }   
+    }
     else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
@@ -513,30 +516,32 @@ i=0;
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
-
 }
 
 -(void)getDistricts:(NSIndexPath *)indexPath{
-    districtName = [districtName stringByReplacingOccurrencesOfString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text withString:@""];
-    districtName=[districtName stringByReplacingOccurrencesOfString:@"," withString:@""];
-    districtName=[districtName stringByReplacingOccurrencesOfString:@" " withString:@""];
+
+    districtName=[districtName stringByReplacingOccurrencesOfString:[[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text stringByAppendingString:@", "] withString:@""];
+    districtName=[districtName stringByReplacingOccurrencesOfString:[@", " stringByAppendingString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text]withString:@""];
+    districtName=[districtName stringByReplacingOccurrencesOfString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text withString:@""];
 }
+
 
 -(void)multiSelectDistricts:(NSIndexPath *)indexPath tableV:(UITableView*)tableView {
     UITableViewCell *newCell =[tableView cellForRowAtIndexPath:indexPath];
     BOOL isSelected = (newCell.accessoryType == UITableViewCellAccessoryCheckmark);
     NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:0 inSection:0];
     BOOL isAllSelected=([self.tableView cellForRowAtIndexPath:indexPathD].accessoryType==UITableViewCellAccessoryCheckmark);
-    if ((!isAllSelected)&&(newCell!=[self.tableView cellForRowAtIndexPath:indexPathD])) {
+    if ((!isAllSelected)&&(newCell!=[self.tableView cellForRowAtIndexPath:indexPathD])) {//если не выбраны все районы
         
-        if (isSelected) {
+        if (isSelected) {//если район уже был выбран
             newCell.accessoryType = UITableViewCellAccessoryNone;
-            [self getDistricts:indexPath];
-            [self setIsSelected:indexPath.row isSelected:0];
+            [self getDistricts:indexPath];//формируем строку выбранных районов путем удаления только что выбранного
+            NSLog(@"%@",districtName);
+            [self setIsSelected:indexPath.row isSelected:0];//отмечаем в базе, что район был выбран
         }
         else {
             newCell.accessoryType = UITableViewCellAccessoryCheckmark;
-            if (districtName==nil) {
+            if (districtName==nil) {//если еще не был выбран район
                 districtName=[tableView cellForRowAtIndexPath:indexPath].textLabel.text;
                 [self setIsSelected:indexPath.row isSelected:1];
             }
@@ -568,7 +573,6 @@ i=0;
             [self setIsSelected:indexPath.row isSelected:1];
         }
     }
-
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -631,11 +635,14 @@ i=0;
         else{//район
             if ((addVC==nil)||([districtName isEqualToString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text])) {
                 [self.delegate getCityName:self city:cityName district:districtName valueIs:cValue];
+                if ([districtName isEqualToString:@""]) {//если не выбран ни один район, то автоматически все
+                    NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:0 inSection:0];
+                    [self.tableView cellForRowAtIndexPath:indexPathD].accessoryType=UITableViewCellAccessoryCheckmark;
+                }
             }
             else{
                 [self.delegate getCityName:self city:cityName district:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text valueIs:cValue];
             }
-            
         }
     }
     else{
@@ -663,7 +670,7 @@ i=0;
         [animation setSubtype:kCATransitionFromRight];
         [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         [animation setFillMode:kCAFillModeBoth];
-        [animation setDuration:.3];
+        [animation setDuration:.5];
         [[self.tableView layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
         
     }

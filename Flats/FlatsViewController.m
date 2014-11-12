@@ -5,6 +5,9 @@
 //  Created by iPlusDev3 on 13.10.14.
 //  Copyright (c) 2014 iPlusDev. All rights reserved.
 //
+#define ROOM_TAG 9
+#define DESCRIPTION_TAG 10
+#define PLACE_TAG 11
 
 #import "FlatsViewController.h"
 
@@ -34,7 +37,7 @@
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"EPhoto"];
     NSPredicate *predicate=[NSPredicate predicateWithFormat:@"id_flat==%ld",flatIndex];
-    NSLog(@"%@",predicate);
+   // NSLog(@"%@",predicate);
     [fetchRequest setPredicate:predicate];
     myPhoto=[[NSMutableArray alloc] init];
     myPhoto = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
@@ -86,7 +89,7 @@
     return resultPredicate;
 }
 
--(void)makeRoomsPredicate{
+-(void)makeRoomsPredicate{//мультивыбор комнат
     NSArray *room=[rooms componentsSeparatedByString:@"/"];
     
     NSPredicate *roomPredicate;
@@ -136,7 +139,14 @@
 {
     cityName=cityNameIs;
     districtName=districtNameIs;
+    if ([districtNameIs isEqualToString:@""]) {
+        districtName=@"Все районы";
+    }
     cValue=value;//для перехода к выбору районов или метро
+    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
+    NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:1 inSection:0];
+
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,indexPathD, nil] withRowAnimation:UITableViewRowAnimationAutomatic];
     [self getFlatsFromCore:rooms is_liked:0];
 }
 
@@ -212,24 +222,23 @@
     }
     return result;
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Configure the cell...
     static NSString *simpleTableIndetfier = @"MyCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:simpleTableIndetfier];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:nil];
     if(cell == nil){
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIndetfier];
     }
     
     cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
-
     if (indexPath.section==0) {
-         [self configureCell:cell atIndex:indexPath cityName:cityName districtName:districtName];
+        [self configureCell:cell atIndex:indexPath cityName:cityName districtName:districtName];
     }
     else{
         [self configureAnotherCell:cell atIndex:indexPath];
     }
-    
     return cell;
 }
 
@@ -284,7 +293,7 @@
     [lblDistrict setText:[listItem valueForKey:@"place"]];
     [cellView addSubview:lblDistrict];
     
-    tvDescript = [[UITextView alloc]initWithFrame:CGRectMake(20, 40, (cellView.frame.size.width), ([self tableView:[self tableView] heightForRowAtIndexPath:indexPath]-50))];
+    tvDescript = [[UITextView alloc]initWithFrame:CGRectMake(15, 30, (cellView.frame.size.width-15), ([self tableView:[self tableView] heightForRowAtIndexPath:indexPath]-50))];
     [tvDescript setUserInteractionEnabled:NO];
     [tvDescript setScrollEnabled:YES];
     tvDescript.scrollsToTop = YES;
@@ -296,9 +305,10 @@
     /*if ([listItem valueForKey:@"descript"]!=nil) {
     height=[self tableView:[self tableView] heightForRowAtIndexPath:indexPath];
     }*/
-    float height=tvDescript.frame.size.height-20;
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(10, height , cell.frame.size.width, 80)];//(x,y,w,h)
+    float height=tvDescript.frame.size.height-15;
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(15, height, cell.frame.size.width, 80)];//(x,y,w,h)
     [scrollView setBackgroundColor:[UIColor clearColor]];
+    [scrollView setScrollEnabled:YES];
     UIImage *image;
     ///получаем все фото, принадлежащие данной квартире
     [self getPhotoFromCore:[[listItem valueForKey:@"id"] integerValue]];
@@ -317,15 +327,15 @@
         [imageView setImage:image];
         imageView.tag=j;
         [imageView setUserInteractionEnabled:YES];
-        
-        [scrollView addSubview:imageView];
+        //раскомментировать нужный кусок кода!!!!
+       [scrollView addSubview:imageView];
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageView:)];
         
         tap.delegate=self;
         [imageView addGestureRecognizer:tap];
     }
    //set content size of you scrollView to the imageView height
-    [scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 50)];//imageView.frame.size.height
+    [scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 70)];//imageView.frame.size.height
     [cellView addSubview:scrollView];
     
     btnLike = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -406,9 +416,6 @@
                 [btn addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
                 [cellView addSubview:btn];
                 btn.tag=y;
-                if ([btn.titleLabel.text isEqualToString:rooms]) {
-                    [btn setHighlighted:YES];
-                }
             }
             break;
         }
@@ -422,12 +429,14 @@
     NSManagedObject *item=[self.myList objectAtIndex:sender.tag];
     if ([item valueForKey:@"is_favorite"]==[NSNumber numberWithInt:1] ) {
         [item setValue:[NSNumber numberWithInt:0] forKey:@"is_favorite"];
-        
     }else{
         [item setValue:[NSNumber numberWithInt:1] forKey:@"is_favorite"];
     }
     [self saveChangesInCoreData:context];
+    if (self.segControl.selectedSegmentIndex==1) {
+        [self getFlatsFromCore:rooms is_liked:1];
     }
+}
 
 -(void)saveChangesInCoreData:(NSManagedObjectContext *)context{
     // Сохраняем изменения
@@ -464,6 +473,7 @@
     if (sender.selected) {
         rooms=[rooms stringByReplacingOccurrencesOfString:[room stringByAppendingString:@"/"]withString:@""];
         rooms=[rooms stringByReplacingOccurrencesOfString:[@"/" stringByAppendingString:room] withString:@""];
+        rooms=[rooms stringByReplacingOccurrencesOfString:room withString:@""];
         sender.selected=NO;
         sender.highlighted=NO;
     }
