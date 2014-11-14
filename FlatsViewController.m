@@ -5,9 +5,6 @@
 //  Created by iPlusDev3 on 13.10.14.
 //  Copyright (c) 2014 iPlusDev. All rights reserved.
 //
-#define ROOM_TAG 9
-#define DESCRIPTION_TAG 10
-#define PLACE_TAG 11
 
 #import "FlatsViewController.h"
 
@@ -22,8 +19,6 @@
 @synthesize myList;
 @synthesize btnLike;
 @synthesize rooms;
-@synthesize lblRooms;
-@synthesize lblDistrict;
 @synthesize lblDescript;
 @synthesize tvDescript;
 @synthesize myPhoto;
@@ -32,6 +27,7 @@
 @synthesize districtName;
 @synthesize cValue;
 @synthesize mainPredicate;
+@synthesize btnTag;
 
 -(void)getPhotoFromCore:(int)flatIndex{
     NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
@@ -61,6 +57,35 @@
     }
     return model;
 }
+
+///мультивыбор станций метро
+-(NSPredicate *)predicateForSubways:(NSString *)subway{
+    
+    NSArray *subways=[subway componentsSeparatedByString:@", "];
+    
+    NSPredicate *subwaysPredicate;
+    NSPredicate *resultPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subways[0]];
+    
+    //resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObject:predicate, nil]];
+    //predicate основной предикат=город+комната+избранное
+    //составной предикат=основной предикат+ предикат метро
+    if (subways.count>1) {
+        for (int r=1; r<subways.count; r++) {
+            if (![subways[r]isEqualToString:@""]) {
+                subwaysPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subways[r]];
+                
+                resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:resultPredicate, subwaysPredicate, nil]];
+            }
+        }
+    }
+    else{
+        resultPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subway];
+    }
+    
+    return resultPredicate;
+}
+
+
 
 ///мультивыбор районов
 -(NSPredicate *)predicateForDistricts:(NSString *)district{
@@ -123,38 +148,39 @@
         NSPredicate *likePredicate=[NSPredicate predicateWithFormat:@"(is_favorite==%d)",1];
         mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, likePredicate, nil]];
     }
-    
-    if(![districtName isEqualToString:@"Все районы"]){
-        mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, [self predicateForDistricts:districtName], nil]];
+    if (cValue==1) {//районы
+        if(![districtName isEqualToString:@"Все районы"]){
+            mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, [self predicateForDistricts:districtName], nil]];
+        }
+    }else if(cValue==3){//метро
+        if(![districtName isEqualToString:@"Все станции метро"]){
+            mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, [self predicateForSubways:districtName], nil]];
+        }
     }
-    
     NSLog(@"%@",mainPredicate);
     [fetchRequest setPredicate:mainPredicate];
     
     self.myList = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
 }
 
 -(void)getCityName:(CitiesViewController*)controller city:(NSString*)cityNameIs district:(NSString *)districtNameIs valueIs:(int)value
 {
     cityName=cityNameIs;
     districtName=districtNameIs;
-    if ([districtNameIs isEqualToString:@""]) {
-        districtName=@"Все районы";
-    }
     cValue=value;//для перехода к выбору районов или метро
+    
     NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:0];
     NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:1 inSection:0];
 
-    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,indexPathD, nil] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObjects:indexPath,indexPathD, nil] withRowAnimation:UITableViewRowAnimationNone];
     [self getFlatsFromCore:rooms is_liked:0];
 }
 
 - (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-    //[self getFlatsFromCore:rooms is_liked:0];
- 
 }
+
 - (void)reloadSections:(NSIndexSet *)sections
       withRowAnimation:(UITableViewRowAnimation)animation{
 
@@ -189,11 +215,21 @@
         
         [headerView addSubview:labelView];
     }
-    cityName=@"Москва";
-    districtName=@"Все районы";
+    if (cityName==nil) {
+        cityName=@"Москва";
+    }
+    if (districtName==nil) {
+        districtName=@"Все районы";
+    }
     cValue=1;//по умолчанию выбор районов
-    rooms=@"Комната";
-    
+    if (rooms==nil) {
+        rooms=@"Комната";
+    }
+
+    if (btnTag==nil) {
+            btnTag=[[NSString stringWithFormat:@"%d",0] stringByAppendingString:@"/"];
+    }
+
     self.tableView.tableHeaderView = headerView;
     [self segControlChange:self.segControl];////????
 }
@@ -234,7 +270,7 @@
     
     cell.textLabel.font = [UIFont boldSystemFontOfSize:14];
     if (indexPath.section==0) {
-        [self configureCell:cell atIndex:indexPath cityName:cityName districtName:districtName];
+        [self configureCell:cell atIndex:indexPath];
     }
     else{
         [self configureAnotherCell:cell atIndex:indexPath];
@@ -242,7 +278,7 @@
     return cell;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+/*-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     CGFloat h=50;
     
@@ -253,8 +289,9 @@
     // available only on ios7.0 sdk.
     NSManagedObject *listItem=[myList objectAtIndex:indexPath.row] ;
     NSString *txt=[listItem valueForKey:@"descript"];
-    
-    CGRect rect = [txt boundingRectWithSize:CGSizeMake(200, CGFLOAT_MAX)options:NSStringDrawingUsesLineFragmentOrigin
+ 
+        
+    CGRect rect = [txt boundingRectWithSize:CGSizeMake(200, CGFLOAT_MAX)options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
                     attributes:attributes
                     context:nil];
     // use font information from the UILabel to calculate the size
@@ -271,6 +308,38 @@
          h=(h+textSize.height)*1.5;
       }
     }
+
+    return h;
+}
+*/
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CGSize constraintSize = CGSizeMake(286.0f, CGFLOAT_MAX);
+    UIFont *theFont  = [UIFont systemFontOfSize:14.0f];
+    CGSize theSize;
+    CGFloat h=50;
+    
+    if (indexPath.section==1) {
+
+   
+    NSManagedObject *listItem=[myList objectAtIndex:indexPath.row];
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        CGRect frame = [[listItem valueForKey:@"descript"] boundingRectWithSize:constraintSize options:(NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading) attributes:@{NSFontAttributeName:theFont} context:nil];
+        theSize = frame.size;
+    }
+    else
+    {
+        theSize = [[listItem valueForKey:@"descript"] sizeWithFont:theFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
+    }
+        if ([listItem valueForKey:@"photo_count"]!=nil) {
+            h=70;
+        }
+        h=h+theSize.height;
+    }
+    
     return h;
 }
 
@@ -281,14 +350,10 @@
     UIView *cellView = cell.contentView;
     
     NSManagedObject *listItem=[myList objectAtIndex:indexPath.row];
-   lblRooms = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 20)];
-    lblRooms.backgroundColor = [UIColor clearColor];
-    lblRooms.font=[UIFont fontWithName:@"Helvetica neue" size:10];
-    [lblRooms setText:[listItem valueForKey:@"rooms"]];
-    [cellView addSubview:lblRooms];
+
  
-    lblDistrict = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 100, 10)];
-    lblDistrict.font=[UIFont fontWithName:@"Helvetica neue" size:8];
+    UILabel *lblDistrict = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 100, 15)];
+    lblDistrict.font=[UIFont fontWithName:@"Helvetica neue" size:12];
     lblDistrict.backgroundColor = [UIColor clearColor];
     [lblDistrict setText:[listItem valueForKey:@"place"]];
     [cellView addSubview:lblDistrict];
@@ -305,14 +370,32 @@
     /*if ([listItem valueForKey:@"descript"]!=nil) {
     height=[self tableView:[self tableView] heightForRowAtIndexPath:indexPath];
     }*/
-    float height=tvDescript.frame.size.height-15;
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(15, height, cell.frame.size.width, 80)];//(x,y,w,h)
-    [scrollView setBackgroundColor:[UIColor clearColor]];
-    [scrollView setScrollEnabled:YES];
-    UIImage *image;
-    ///получаем все фото, принадлежащие данной квартире
+    float height=tvDescript.frame.size.height-35;
+ 
+    UILabel *lblRooms = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 20)];
+    lblRooms.backgroundColor = [UIColor clearColor];
+    lblRooms.font=[UIFont fontWithName:@"Helvetica neue" size:12];
+    if ([listItem valueForKey:@"price"]!=nil) {
+        [lblRooms setText:[[[listItem valueForKey:@"rooms"] stringByAppendingString:@" "] stringByAppendingString:[listItem valueForKey:@"price"]]];
+    }
+    else{
+        [lblRooms setText:[listItem valueForKey:@"rooms"]];
+    }
+    
+    [cellView addSubview:lblRooms];
+    
+    
+       ///получаем все фото, принадлежащие данной квартире
     [self getPhotoFromCore:[[listItem valueForKey:@"id"] integerValue]];
     
+    if (myPhoto.count!=0) {
+  
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(15, height, cell.frame.size.width, 70)];//(x,y,w,h)
+   // [scrollView setBackgroundColor:[UIColor grayColor]];
+   
+    //[scrollView contentSize];
+    UIImage *image;
+
     NSManagedObject *photoItem;
     
         for (int j=0; j<myPhoto.count; j++) {//j<myPhoto.count
@@ -335,17 +418,36 @@
         [imageView addGestureRecognizer:tap];
     }
    //set content size of you scrollView to the imageView height
-    [scrollView setContentSize:CGSizeMake(self.view.frame.size.width, 70)];//imageView.frame.size.height
+    [scrollView setContentSize:CGSizeMake(75*myPhoto.count, 70)];//imageView.frame.size.height
+    [scrollView setScrollEnabled:YES];
+        scrollView.delegate=self;
+    scrollView.pagingEnabled = YES;//////
     [cellView addSubview:scrollView];
+      }//photoCount!=0
+    if ([listItem valueForKey:@"phone"]!=nil) {
+        UILabel *lblPhone = [[UILabel alloc] initWithFrame:CGRectMake(20, height+10, 100, 10)];
+        lblPhone.font=[UIFont fontWithName:@"Helvetica neue" size:8];
+        lblPhone.backgroundColor = [UIColor clearColor];
+        [lblPhone setText:[listItem valueForKey:@"phone"]];
+        [cellView addSubview:lblPhone];
+    }
     
     btnLike = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect btnThree = CGRectMake(260, 0, 25, 25);
     [btnLike  setFrame:btnThree];
     UIImage *imageLike = [UIImage imageNamed:@"5959_29"];
-    [btnLike setImage:imageLike forState:UIControlStateNormal];
+    [btnLike setImage:imageLike forState:UIControlStateSelected];
+    UIImage *imageFav=[UIImage imageNamed:@"fav"];
+    [btnLike setImage:imageFav forState:UIControlStateNormal];
     [btnLike  addTarget:self action:@selector(btnLikeClick:) forControlEvents:UIControlEventTouchUpInside];
     btnLike.tag=indexPath.row;
     [cellView addSubview:btnLike];
+    
+    if ([[listItem valueForKey:@"is_favorite"]integerValue]==1) {
+        btnLike.selected=YES;
+    }else{
+        btnLike.selected=NO;
+    }
     
     btnDelete = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect btDelete = CGRectMake(290, 0, 25, 25);
@@ -375,16 +477,16 @@
 }
 
 /////////////configuring cells in the first section
-- (void)configureCell:(UITableViewCell*)cell atIndex:(NSIndexPath*)indexPath cityName:(NSString *)city districtName:(NSString *)district {
+- (void)configureCell:(UITableViewCell*)cell atIndex:(NSIndexPath*)indexPath {
     //cell.backgroundColor=[UIColor lightGrayColor];
     switch (indexPath.row) {
         case 0:{
-            cell.textLabel.text=city;
+            cell.textLabel.text=cityName;
             cell.accessoryType=1;
             break;
         }
         case 1:{
-            cell.textLabel.text=district;
+            cell.textLabel.text=districtName;
             cell.accessoryType=1;
             break;
         }
@@ -416,6 +518,12 @@
                 [btn addTarget:self action:@selector(buttonActions:) forControlEvents:UIControlEventTouchUpInside];
                 [cellView addSubview:btn];
                 btn.tag=y;
+                NSArray *btnTags=[btnTag componentsSeparatedByString:@"/"];
+                for (int u=0; u<btnTags.count; u++) {
+                    if ((y==[btnTags[u] integerValue])&&(![btnTags[u]isEqualToString:@""])) {
+                        [btn setSelected:YES];
+                    }
+                }
             }
             break;
         }
@@ -435,6 +543,9 @@
     [self saveChangesInCoreData:context];
     if (self.segControl.selectedSegmentIndex==1) {
         [self getFlatsFromCore:rooms is_liked:1];
+    }else{
+        NSIndexPath *indexPath=[NSIndexPath indexPathForRow:sender.tag inSection:1];
+        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationNone];
     }
 }
 
@@ -454,7 +565,9 @@
     NSManagedObject *item=[self.myList objectAtIndex:sender.tag];
     [self getPhotoFromCore:[[item valueForKey:@"id"] integerValue]];
     if (self.myPhoto.count!=0) {//удаление фото
-        for (int y=0; y<self.myPhoto.count; y++) {
+        for (int y=0; y<self.myPhoto.count; y++) {//возможно надо в core data связать сущности
+            NSManagedObject *listItem=[self.myPhoto objectAtIndex:y];
+            [[NSFileManager defaultManager] removeItemAtPath:[listItem valueForKey:@"path"] error:nil];//удаление фото из папки documents
             [context deleteObject:[self.myPhoto objectAtIndex:y]];
         }
     }
@@ -465,48 +578,53 @@
     NSIndexPath *indPath=[NSIndexPath indexPathForRow:sender.tag inSection:1];
     [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indPath]
                           withRowAnimation:UITableViewRowAnimationFade];
-    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
     [self saveChangesInCoreData:context];
 }
 
--(void)makeBtnActions:(UIButton *)sender room:(NSString *)room {
+-(void)makeBtnActions:(UIButton *)sender room:(NSString *)room btnT:(int)btnT {
     if (sender.selected) {
         rooms=[rooms stringByReplacingOccurrencesOfString:[room stringByAppendingString:@"/"]withString:@""];
         rooms=[rooms stringByReplacingOccurrencesOfString:[@"/" stringByAppendingString:room] withString:@""];
         rooms=[rooms stringByReplacingOccurrencesOfString:room withString:@""];
+        
+        btnTag=[btnTag stringByReplacingOccurrencesOfString:[[NSString stringWithFormat:@"%d",btnT] stringByAppendingString:@"/"]withString:@""];
+        btnTag=[btnTag stringByReplacingOccurrencesOfString:[@"/" stringByAppendingString:[NSString stringWithFormat:@"%d",btnT]] withString:@""];
+        btnTag=[btnTag stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"%d",btnT] withString:@""];
+        
         sender.selected=NO;
         sender.highlighted=NO;
     }
     else{
         sender.selected=YES;
         rooms=[[rooms stringByAppendingString:@"/"] stringByAppendingString:room];
+        btnTag=[[btnTag stringByAppendingString:[NSString stringWithFormat:@"%d", sender.tag]] stringByAppendingString:@"/"];
     }
 
 }
 
 - (void) buttonActions:(UIButton*)sender {
 
-        switch (sender.tag) {
+    switch (sender.tag) {
         case 0:
-            [self makeBtnActions:sender room:@"Комната"];
+            [self makeBtnActions:sender room:@"Комната" btnT:sender.tag];
             [self segControlChange:sender];
             break;
         case 1:
-            [self makeBtnActions:sender room:@"1-к квартира"];
+            [self makeBtnActions:sender room:@"1-к квартира" btnT:sender.tag];
             [self segControlChange:sender];
             break;
         case 2:
-            [self makeBtnActions:sender room:@"2-к квартира"];
+            [self makeBtnActions:sender room:@"2-к квартира" btnT:sender.tag];
             [self segControlChange:sender];
             break;
         case 3:
-            [self makeBtnActions:sender room:@"3-к квартира"];
+            [self makeBtnActions:sender room:@"3-к квартира" btnT:sender.tag];
             [self segControlChange:sender];
             break;
         
            default:
             break;
-    
     }
 }
 
@@ -548,11 +666,13 @@
                     upcoming.cityName=cityName;
                     upcoming.districtName=districtName;
                     upcoming.cValue=1;
+                    [upcoming.btnSubway setTitle:@"Метро" forState:UIControlStateNormal];
                     upcoming.delegate = self;
                 }else{
                     upcoming.title=@"Выбор метро";
                     upcoming.cityName=cityName;
                     upcoming.districtName=districtName;
+                    [upcoming.btnSubway setTitle:@"Районы" forState:UIControlStateNormal];
                     upcoming.cValue=3;
                     upcoming.delegate = self;
                 }
@@ -582,6 +702,7 @@
       upcoming.cityName=cityName;
       upcoming.districtName=districtName;
       upcoming.rooms=rooms;
+      upcoming.btnTag=btnTag;
       upcoming.navigationController.navigationItem.hidesBackButton=YES;
      }
   

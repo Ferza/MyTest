@@ -17,6 +17,7 @@
 @synthesize districtName;
 @synthesize rooms;
 @synthesize delegate;
+@synthesize btnTag;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -178,6 +179,7 @@
         upcoming.cityName=cityName;
         upcoming.districtName=districtName;
         upcoming.rooms=rooms;
+        upcoming.btnTag=btnTag;
     }
     if ([segue.identifier isEqualToString:@"favorite"]) {
         FlatsViewController *upcoming = segue.destinationViewController;
@@ -185,6 +187,7 @@
         upcoming.cityName=cityName;
         upcoming.districtName=districtName;
         upcoming.rooms=rooms;
+        upcoming.btnTag=btnTag;
     }
   
 }

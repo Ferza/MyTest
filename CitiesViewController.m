@@ -18,7 +18,7 @@
 @synthesize delegate;
 @synthesize addVC;
 @synthesize districtName;
-@synthesize roomsIndex;
+@synthesize rooms;
 
 i=0;
 //////////////core data
@@ -50,10 +50,10 @@ i=0;
     }
     return self;
 }
-- (void)viewDidAppear:(BOOL)animated{
+/*- (void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
 }
-
+*/
 -(void)getDataFromServer{
     NSString *city;//для запроса серверу(чтобы было понятно к какой модели обращаться)
     
@@ -95,10 +95,10 @@ i=0;
                 url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&district=%@&district_id=%ld",[appDelegate getUUID],city,lastId];
             }
                 break;
-          /*  case 3: {
-                url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&subway=%@&district_id=%ld",[appDelegate getUUID],city,lastId];
+           case 3: {
+                url = [NSString stringWithFormat:@"http://citatas.biz/flats/Api/list?login=%@&subway=%@&subway_id=%ld",[appDelegate getUUID],city,lastId];
             }
-                break;*/
+                break;
             default:
                 break;
         }
@@ -141,8 +141,7 @@ i=0;
                     }
                 }
                 break;///1
-                        
-                  /* case 3:{//subway
+                        case 3:{//subway
                         NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"ESubway" inManagedObjectContext:managedObjectContext];
                         [newItem setValue:qItem.subway_name forKey:@"name"];
                         [newItem setValue:[NSNumber numberWithInt:[qItem.subway_id intValue]] forKey:@"id"];
@@ -153,7 +152,7 @@ i=0;
                         }
                     }
                         break;///3
-                        */
+                    
                         default:
                         break;
                 }
@@ -183,9 +182,9 @@ i=0;
             [self.tableView reloadData];
         }
             break;
-        /*case 3:{
+        case 3:{
             NSManagedObjectContext *managedObjectContext = [self managedObjectContext];
-            //получаем районы выбранного города=районы с id_city=idCity
+            //получаем станции метро выбранного города=районы с id_city=idCity
             NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"ESubway"];
             long id_c=[self getIDCity];
             NSPredicate *pred =[NSPredicate predicateWithFormat:@"id_city==%ld",id_c];//ID is integer!!!!
@@ -195,7 +194,7 @@ i=0;
             [self.tableView reloadData];
             
         }
-            break;*/
+            break;
         default:
             break;
     }
@@ -357,85 +356,103 @@ i=0;
 -(void)cellConfig:(UITableViewCell *)cell cellIndex:(int)row{
     NSManagedObject *listItem = [self.myList objectAtIndex:row];
     cell.textLabel.text=[listItem valueForKey:@"name"];
+    
     if ([[listItem valueForKey:@"is_selected"]integerValue]==1) {
         cell.accessoryType=UITableViewCellAccessoryCheckmark;
+    }else
+    {
+       cell.accessoryType=UITableViewCellAccessoryNone;
     }
 }
 
+//заполнение ячеек значениями и отметка галочками уже выбранных
 -(void)configureCell:(UITableViewCell *)cell atIndexP:(NSIndexPath *)indexPath{
-    if (addVC==nil) {
+    if (addVC==nil) {//если не добавление объявления
         switch (cValue) {//если значение поля is_selected ==1, то отмечаем галочкой запись
-            case 0:{
-                [self cellConfig:cell cellIndex:indexPath.row];
-                if ([cityName isEqualToString:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text]) {
+            case 0:
+            {//город
+                NSManagedObject *listItem = [self.myList objectAtIndex:indexPath.row];
+                cell.textLabel.text=[listItem valueForKey:@"name"];
+
+                if ([cityName isEqualToString:cell.textLabel.text]) {
                     cell.accessoryType=UITableViewCellAccessoryCheckmark;
-                    [self setIsSelected:indexPath.row isSelected:1];/////
-                }
+                  }
             }
                 break;
-            case 1:{
+                
+            case 1:
+            {//район
                 if (indexPath.section==0) {
                     cell.textLabel.text=@"Все районы";
-                    if ([districtName isEqualToString:@"Все районы"]) {
+                      if (([districtName isEqualToString:@"Все районы"])||([districtName isEqualToString:@"Все станции метро"])||(districtName==nil)){
                         cell.accessoryType = UITableViewCellAccessoryCheckmark;
-                        for (int u=0; u<self.myList.count; u++) {
+                        for (int u=0; u<self.myList.count; u++) {//если выбраны все районы то остальные анчек
                             NSIndexPath *indexP=[NSIndexPath indexPathForRow:u inSection:1];
                             [self setIsSelected:indexP.row isSelected:0];/////
                         }
                     }
-                }
+                }//Все районы
                 else{
                     [self cellConfig:cell cellIndex:indexPath.row];
                 }
             }
                 break;
-                /* case 3:if (indexPath.section==0) {
+                
+                 case 3:
+                if (indexPath.section==0) {
                  cell.textLabel.text=@"Все станции метро";
-                 if ([districtName isEqualToString:@"Все станции метро"]) {
-                 cell.accessoryType = UITableViewCellAccessoryCheckmark;                }
+                 if (([districtName isEqualToString:@"Все районы"])||([districtName isEqualToString:@"Все станции метро"])||(districtName==nil)) {
+                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                     for (int u=0; u<self.myList.count; u++) {
+                         NSIndexPath *indexP=[NSIndexPath indexPathForRow:u inSection:1];
+                         [self setIsSelected:indexP.row isSelected:0];/////
+                      }
+                    }//Все станции метро
                  }else{
-                 NSManagedObject *listItem = [self.myList objectAtIndex:indexPath.row];
-                 cell.textLabel.text=[listItem valueForKey:@"name"];}
-                 break;*/
-            default:
-                break;
-        }
-    }else{///добавление объявления
-        ///////
-        switch (cValue) {
-            case 0:{
-                [self deSelect:cityName isVal:@"Город"];
-                [self cellConfig:cell cellIndex:indexPath.row];
-            }
-                break;
-            case 1:{
-                [self deSelect:districtName isVal:@"Выберите район"];
-                [self cellConfig:cell cellIndex:indexPath.row];
-            }
-                break;
-            case 2:{
-                [self configureCell:cell atIndexPath:indexPath];
-    
-                /*if (roomsIndex.row==indexPath.row) {
-                    cell.accessoryType=UITableViewCellAccessoryCheckmark;
-                }*/
-            }
-                break;
-            case 3:
-               /* [self deSelect:subwayName isVal:@"Метро"];
-                [self cellConfig:cell cellIndex:indexPath.row];*/
-                break;
+                     [self cellConfig:cell cellIndex:indexPath.row];
+                    }
+                 break;
             default:
                 break;
         }
     }
-}
--(void)deSelect:(NSString *)name isVal:(NSString *)value{
-    if ([name isEqualToString: value]) {
-        for (int y=0; y<self.myList.count; y++) {
-            NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:y inSection:0];
-            [self.tableView cellForRowAtIndexPath:indexPathD].accessoryType=UITableViewCellEditingStyleNone;
-            [self setIsSelected:indexPathD.row isSelected:0];
+    
+    else{///добавление объявления
+        ///////
+        switch (cValue) {
+            case 0:{//город
+                /*[self deSelect:cityName isVal:@"Город"];
+                [self cellConfig:cell cellIndex:indexPath.row];*/
+                NSManagedObject *listItem = [self.myList objectAtIndex:indexPath.row];
+                cell.textLabel.text=[listItem valueForKey:@"name"];
+                NSLog(@"%@",cell.textLabel.text);
+                if ([cityName isEqualToString:cell.textLabel.text]) {
+                    cell.accessoryType=UITableViewCellAccessoryCheckmark;
+                }
+            }
+                break;
+            case 1:{//район
+                //[self deSelect:districtName isVal:@"Выберите район"];
+               if (([districtName isEqualToString:@"Выберите район"])||(districtName==nil)||([districtName isEqualToString:@"Выберите станцию метро"])) {
+                    [self.tableView cellForRowAtIndexPath:indexPath].accessoryType=UITableViewCellEditingStyleNone;
+                    [self setIsSelected:indexPath.row isSelected:0];
+                }
+                [self cellConfig:cell cellIndex:indexPath.row];
+            }
+                break;
+            case 2:{//комната
+                [self configureCell:cell atIndexPath:indexPath];
+            }
+                break;
+            case 3://метро
+                if ((districtName==nil)||([districtName isEqualToString:@"Выберите район"])||([districtName isEqualToString:@"Выберите станцию метро"])) {
+                    [self.tableView cellForRowAtIndexPath:indexPath].accessoryType=UITableViewCellEditingStyleNone;
+                    [self setIsSelected:indexPath.row isSelected:0];
+                }
+                [self cellConfig:cell cellIndex:indexPath.row];
+                break;
+            default:
+                break;
         }
     }
 }
@@ -475,6 +492,9 @@ i=0;
         default:
             break;
     }
+    if ([cell.textLabel.text isEqualToString:rooms]) {
+        cell.accessoryType=UITableViewCellAccessoryCheckmark;
+    }
 }
 ////////удалить потом!!!!!!!
 // Override to support conditional editing of the table view.
@@ -490,6 +510,7 @@ i=0;
         // Delete the row from the data source
         // Удаляем выделенный пункт
         NSManagedObjectContext *context = [self managedObjectContext];
+        
         [context deleteObject:[self.myList objectAtIndex:indexPath.row]];
         [self.myList removeObject:[self.myList objectAtIndex:indexPath.row]];
         [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
@@ -577,9 +598,6 @@ i=0;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {// написать метод, который будет выбранной записи устанавливать значение поля is_selected в 1
-   /* if (cValue==2) {//rooms
-        lastIndexPath=roomsIndex;
-    }*/
     for (int u=0; u<self.myList.count; u++) {
       NSManagedObject *listItem = [self.myList objectAtIndex:u];
         if ([[listItem valueForKey:@"is_selected"]integerValue]==1) {
@@ -608,6 +626,9 @@ i=0;
             else{
                  newCell.accessoryType = UITableViewCellAccessoryCheckmark;
                 lastIndexPath = indexPath;
+                if ((cValue==1)||(cValue==3)) {//районы или метро
+                    [self setIsSelected:indexPath.row isSelected:1];
+                }
             }
     }
     else{//мультивыбор районов
@@ -638,7 +659,13 @@ i=0;
                 if ([districtName isEqualToString:@""]) {//если не выбран ни один район, то автоматически все
                     NSIndexPath *indexPathD=[NSIndexPath indexPathForRow:0 inSection:0];
                     [self.tableView cellForRowAtIndexPath:indexPathD].accessoryType=UITableViewCellAccessoryCheckmark;
+                    if (cValue==1){
+                    districtName=@"Все районы";
+                    }else if(cValue==3){
+                    districtName=@"Все станции метро";
+                    }
                 }
+               [self.delegate getCityName:self city:cityName district:districtName valueIs:cValue];
             }
             else{
                 [self.delegate getCityName:self city:cityName district:[self.tableView cellForRowAtIndexPath:indexPath].textLabel.text valueIs:cValue];
@@ -670,7 +697,9 @@ i=0;
         [animation setSubtype:kCATransitionFromRight];
         [animation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
         [animation setFillMode:kCAFillModeBoth];
-        [animation setDuration:.5];
+        [animation setDuration:.3];
+       //[self.view reloadInputViews];
+        [self viewDidLoad];
         [[self.tableView layer] addAnimation:animation forKey:@"UITableViewReloadDataAnimationKey"];
         
     }
@@ -681,11 +710,45 @@ i=0;
         cValue=3;
         self.title=@"Выбор метро";
         [self.btnSubway setTitle:@"Районы" forState:UIControlStateNormal];
+       if (districtName!=nil) {
+            for (int g=0; g<self.myList.count; g++) {//если были выбраны районы, надо их удалить из переменной
+                NSIndexPath *indexPath=[NSIndexPath indexPathForRow:g inSection:1];
+                if ([self.tableView cellForRowAtIndexPath:indexPath].accessoryType==UITableViewCellAccessoryCheckmark) {
+                    [self getDistricts:indexPath];//удаляем районы из  переменной
+                    [self setIsSelected:indexPath.row isSelected:0];// убираем галочку
+                }
+            }
+           if (addVC==nil) {
+                districtName=@"Все станции метро";
+           }
+           else{
+               districtName=@"Выберите станцию метро";
+           }
+       }
+        [self.delegate getCityName:self city:cityName district:districtName valueIs:cValue];
         [self reloadData:YES];
-    }else if(cValue==3){
+    }
+    
+    else if(cValue==3){
         cValue=1;
         self.title=@"Выбор района";
         [self.btnSubway setTitle:@"Метро" forState:UIControlStateNormal];
+        if (districtName!=nil) {
+            for (int g=0; g<self.myList.count; g++) {//если были выбраны районы, надо их удалить из переменной
+                NSIndexPath *indexPath=[NSIndexPath indexPathForRow:g inSection:1];
+                if ([self.tableView cellForRowAtIndexPath:indexPath].accessoryType==UITableViewCellAccessoryCheckmark) {
+                    [self getDistricts:indexPath];//удаляем районы из  переменной
+                    [self setIsSelected:indexPath.row isSelected:0];// убираем галочку (в базе снимаем флажок выбора)
+                }
+            }
+            if (addVC==nil) {
+                districtName=@"Все районы";
+            }else{
+                districtName=@"Выберите район";
+            }
+            
+        }
+        [self.delegate getCityName:self city:cityName district:districtName valueIs:cValue];
         [self reloadData:YES];
     }
 

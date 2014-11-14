@@ -15,7 +15,7 @@
 #import "MenuViewController.h"
 #import "AFNetworking.h"
 
-@interface FlatsViewController : UITableViewController<UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate,NSXMLParserDelegate, UITextViewDelegate>
+@interface FlatsViewController : UITableViewController<UIGestureRecognizerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIActionSheetDelegate,NSXMLParserDelegate, UITextViewDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) CitiesViewController *cityViewController;
 @property (strong,nonatomic)NSMutableArray *myList;
@@ -26,13 +26,11 @@
 @property UIButton *btnLike;
 @property UIButton *btnDelete;
 @property NSString *rooms;
-@property UILabel *lblRooms;
-@property UILabel *lblDistrict;
 @property UILabel *lblDescript;
 @property UITextView *tvDescript;
 @property (strong, nonatomic) NSString *cityName;
 @property (strong, nonatomic) NSString *districtName;
-
+@property NSString *btnTag;
 @property (strong, nonatomic) IBOutlet UIButton *btnElse;
 - (IBAction)btnElseClick:(id)sender;
 @property (strong, nonatomic) IBOutlet UITapGestureRecognizer *tapGesture;

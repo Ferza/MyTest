@@ -23,7 +23,7 @@
 @synthesize status;
 @synthesize path;
 @synthesize days;
-
+@synthesize subway;
 
 //доделать!!!!!
 -(void) setValue:(NSString*)value forProperty:(NSString*)property
@@ -77,7 +77,9 @@
     if ([property isEqualToString:@"days"]) {
         days=value;
     }
-
+    if ([property isEqualToString:@"subway"]) {
+        days=value;
+    }
     //  _publication=value;
     
     

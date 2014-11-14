@@ -17,5 +17,5 @@
 @property NSString *districtName;
 @property NSString *rooms;
 @property (nonatomic, weak) id  delegate;
-
+@property NSString *btnTag;
 @end

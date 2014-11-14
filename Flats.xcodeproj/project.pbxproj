@@ -24,7 +24,6 @@
 		5C9010B319F8C377003863D7 /* KeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010AE19F8C377003863D7 /* KeychainWrapper.m */; };
 		5C9010B419F8C377003863D7 /* NSString+APGenerate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010B019F8C377003863D7 /* NSString+APGenerate.m */; };
 		5C9010B519F8C377003863D7 /* NSString+APMD5.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9010B219F8C377003863D7 /* NSString+APMD5.m */; };
-		5C90E63B1A0F83F4003F2CD0 /* NewFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */; };
 		5C9240DF19FD5E3F0085B3A6 /* PhotosViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9240DE19FD5E3F0085B3A6 /* PhotosViewController.m */; };
 		5C96C6A319FFFB0900BBD684 /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C96C6A219FFFB0900BBD684 /* MenuViewController.m */; };
 		5C980A491A0010CD0036CA13 /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A371A0010CD0036CA13 /* AFHTTPRequestOperation.m */; };
@@ -37,12 +36,14 @@
 		5C980A501A0010CD0036CA13 /* AFURLResponseSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A461A0010CD0036CA13 /* AFURLResponseSerialization.m */; };
 		5C980A511A0010CD0036CA13 /* AFURLSessionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C980A481A0010CD0036CA13 /* AFURLSessionManager.m */; };
 		5C9A728119EAF13100AAEF00 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9A728019EAF13000AAEF00 /* AddViewController.m */; };
+		5C9D85801A15E50300371901 /* fav.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D857F1A15E50300371901 /* fav.png */; };
+		5C9D85821A15E88200371901 /* cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 5C9D85811A15E88200371901 /* cross.png */; };
+		5C9D85851A15FC9A00371901 /* CoreFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5C9D85831A15FC9A00371901 /* CoreFlats.xcdatamodeld */; };
 		5C9FDFDD19EC2C090007E2F7 /* FlatsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FDFDC19EC2C090007E2F7 /* FlatsViewController.m */; };
 		5C9FDFE019EC2CF80007E2F7 /* CitiesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C9FDFDF19EC2CF80007E2F7 /* CitiesViewController.m */; };
 		5CA1A4E41A07F6EE00AA689C /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 5CA1A4E31A07F6EE00AA689C /* trash.png */; };
 		5CA61E6F19EE7FB800F4D0A4 /* CItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA61E6E19EE7FB800F4D0A4 /* CItem.m */; };
 		5CA8B0481A00003100FA7E96 /* FastSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CA8B0471A00003100FA7E96 /* FastSegue.m */; };
-		5CAADA1B1A094480005D41DD /* CoreFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */; };
 		5CB02CCC1A10803000811786 /* DataFlats.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5CB02CCA1A10803000811786 /* DataFlats.xcdatamodeld */; };
 		5CB5C21B19E462B700BB5F7E /* QItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB5C21A19E462B700BB5F7E /* QItem.m */; };
 		5CB7B1231A000AF200AE3261 /* HelpViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CB7B1221A000AF200AE3261 /* HelpViewController.m */; };
@@ -83,7 +84,6 @@
 		5C9010B019F8C377003863D7 /* NSString+APGenerate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+APGenerate.m"; sourceTree = "<group>"; };
 		5C9010B119F8C377003863D7 /* NSString+APMD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+APMD5.h"; sourceTree = "<group>"; };
 		5C9010B219F8C377003863D7 /* NSString+APMD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+APMD5.m"; sourceTree = "<group>"; };
-		5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = NewFlats.xcdatamodel; sourceTree = "<group>"; };
 		5C9240DD19FD5E3F0085B3A6 /* PhotosViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotosViewController.h; sourceTree = "<group>"; };
 		5C9240DE19FD5E3F0085B3A6 /* PhotosViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotosViewController.m; sourceTree = "<group>"; };
 		5C96C6A119FFFB0900BBD684 /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
@@ -109,6 +109,9 @@
 		5C980A481A0010CD0036CA13 /* AFURLSessionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFURLSessionManager.m; sourceTree = "<group>"; };
 		5C9A727F19EAF13000AAEF00 /* AddViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddViewController.h; sourceTree = "<group>"; };
 		5C9A728019EAF13000AAEF00 /* AddViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddViewController.m; sourceTree = "<group>"; };
+		5C9D857F1A15E50300371901 /* fav.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fav.png; sourceTree = "<group>"; };
+		5C9D85811A15E88200371901 /* cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cross.png; sourceTree = "<group>"; };
+		5C9D85841A15FC9A00371901 /* CoreFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreFlats.xcdatamodel; sourceTree = "<group>"; };
 		5C9FDFDB19EC2C090007E2F7 /* FlatsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatsViewController.h; sourceTree = "<group>"; };
 		5C9FDFDC19EC2C090007E2F7 /* FlatsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlatsViewController.m; sourceTree = "<group>"; };
 		5C9FDFDE19EC2CF80007E2F7 /* CitiesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CitiesViewController.h; sourceTree = "<group>"; };
@@ -118,7 +121,6 @@
 		5CA61E6E19EE7FB800F4D0A4 /* CItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CItem.m; sourceTree = "<group>"; };
 		5CA8B0461A00003100FA7E96 /* FastSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSegue.h; sourceTree = "<group>"; };
 		5CA8B0471A00003100FA7E96 /* FastSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FastSegue.m; sourceTree = "<group>"; };
-		5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreFlats.xcdatamodel; sourceTree = "<group>"; };
 		5CB02CCB1A10803000811786 /* DataFlats.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataFlats.xcdatamodel; sourceTree = "<group>"; };
 		5CB5C21919E462B700BB5F7E /* QItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QItem.h; sourceTree = "<group>"; };
 		5CB5C21A19E462B700BB5F7E /* QItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = QItem.m; sourceTree = "<group>"; };
@@ -214,9 +216,8 @@
 				5CA8B0471A00003100FA7E96 /* FastSegue.m */,
 				5CB7B1211A000AF200AE3261 /* HelpViewController.h */,
 				5CB7B1221A000AF200AE3261 /* HelpViewController.m */,
-				5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */,
-				5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */,
 				5CB02CCA1A10803000811786 /* DataFlats.xcdatamodeld */,
+				5C9D85831A15FC9A00371901 /* CoreFlats.xcdatamodeld */,
 			);
 			path = Flats;
 			sourceTree = "<group>";
@@ -254,6 +255,8 @@
 			isa = PBXGroup;
 			children = (
 				5CA1A4E31A07F6EE00AA689C /* trash.png */,
+				5C9D85811A15E88200371901 /* cross.png */,
+				5C9D857F1A15E50300371901 /* fav.png */,
 				5C3298A819F4232F000B5C5D /* 5959_29.png */,
 			);
 			name = img;
@@ -361,9 +364,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C9D85821A15E88200371901 /* cross.png in Resources */,
 				5C3298A919F4232F000B5C5D /* 5959_29.png in Resources */,
 				5C342DC619E15DFE00D29CA2 /* Images.xcassets in Resources */,
 				5C342DB819E15DFE00D29CA2 /* InfoPlist.strings in Resources */,
+				5C9D85801A15E50300371901 /* fav.png in Resources */,
 				5C342DC119E15DFE00D29CA2 /* Main.storyboard in Resources */,
 				5CA1A4E41A07F6EE00AA689C /* trash.png in Resources */,
 			);
@@ -389,9 +394,8 @@
 				5C9240DF19FD5E3F0085B3A6 /* PhotosViewController.m in Sources */,
 				5C9FDFDD19EC2C090007E2F7 /* FlatsViewController.m in Sources */,
 				5C980A4B1A0010CD0036CA13 /* AFHTTPSessionManager.m in Sources */,
-				5C90E63B1A0F83F4003F2CD0 /* NewFlats.xcdatamodeld in Sources */,
+				5C9D85851A15FC9A00371901 /* CoreFlats.xcdatamodeld in Sources */,
 				5CA61E6F19EE7FB800F4D0A4 /* CItem.m in Sources */,
-				5CAADA1B1A094480005D41DD /* CoreFlats.xcdatamodeld in Sources */,
 				5C980A4C1A0010CD0036CA13 /* AFNetworkReachabilityManager.m in Sources */,
 				5C980A491A0010CD0036CA13 /* AFHTTPRequestOperation.m in Sources */,
 				5C980A4F1A0010CD0036CA13 /* AFURLRequestSerialization.m in Sources */,
@@ -632,22 +636,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		5C90E6391A0F83F4003F2CD0 /* NewFlats.xcdatamodeld */ = {
+		5C9D85831A15FC9A00371901 /* CoreFlats.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */,
+				5C9D85841A15FC9A00371901 /* CoreFlats.xcdatamodel */,
 			);
-			currentVersion = 5C90E63A1A0F83F4003F2CD0 /* NewFlats.xcdatamodel */;
-			path = NewFlats.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-		5CAADA191A094480005D41DD /* CoreFlats.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */,
-			);
-			currentVersion = 5CAADA1A1A094480005D41DD /* CoreFlats.xcdatamodel */;
+			currentVersion = 5C9D85841A15FC9A00371901 /* CoreFlats.xcdatamodel */;
 			path = CoreFlats.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

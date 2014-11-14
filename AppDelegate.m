@@ -187,7 +187,7 @@
         
     }
     //дописать поля из таблицы!!!!!!!!!!
-    else if ([elementName isEqualToString:@"id"]||[elementName isEqualToString:@"city"] || [elementName isEqualToString:@"place"] || [elementName isEqualToString:@"rooms"]||[elementName isEqualToString:@"price"]||[elementName isEqualToString:@"descript"]||[elementName isEqualToString:@"photo"]||[elementName isEqualToString:@"name"]||[elementName isEqualToString:@"phone"]||[elementName isEqualToString:@"pub_date"]||[elementName isEqualToString:@"photo_count"]||[elementName isEqualToString:@"path"]||[elementName isEqualToString:@"days"]) {
+    else if ([elementName isEqualToString:@"id"]||[elementName isEqualToString:@"city"] || [elementName isEqualToString:@"place"] || [elementName isEqualToString:@"rooms"]||[elementName isEqualToString:@"price"]||[elementName isEqualToString:@"descript"]||[elementName isEqualToString:@"photo"]||[elementName isEqualToString:@"name"]||[elementName isEqualToString:@"phone"]||[elementName isEqualToString:@"pub_date"]||[elementName isEqualToString:@"photo_count"]||[elementName isEqualToString:@"path"]||[elementName isEqualToString:@"days"]||[elementName isEqualToString:@"subway"]) {
         _currentProperty = elementName;
         return;
     }
@@ -238,6 +238,7 @@
         [newItem setValue:qItem.name forKey:@"name"];
         [newItem setValue:qItem.phone forKey:@"phone"];
         [newItem setValue:qItem.pub_date forKey:@"pub_date"];
+       // [newItem setValue:qItem.subway forKey:@"subway"];
         [newItem setValue:[NSNumber numberWithLong:[qItem.id_rec intValue]] forKey:@"id"];
         [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
         //[newItem setValue:[NSNumber numberWithInt:0] forKey:@"is_favorite"];
@@ -327,7 +328,7 @@
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"DataFlats" withExtension:@"momd"];
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"CoreFlats" withExtension:@"momd"];
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
@@ -340,7 +341,7 @@
         return _persistentStoreCoordinator;
     }
     
-    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"DataFlats.sqlite"];
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreFlats.sqlite"];
     
     NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];

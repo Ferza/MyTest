@@ -39,6 +39,6 @@
 @property (strong, nonatomic) NSString *districtName;
 @property int cValue;
 //@property UIButton *radioBtn;
-@property (strong, nonatomic) NSIndexPath *roomsIndex;
+@property (strong, nonatomic) NSString *rooms;
 
 @end

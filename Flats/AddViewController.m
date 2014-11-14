@@ -73,7 +73,10 @@
     }
     return self;
 }
-
+-(void)viewWillDisappear:(BOOL)animated{
+    [super viewWillDisappear:NO];
+        [self.navigationController.navigationBar setBarTintColor:[UIColor darkGrayColor]];
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -197,25 +200,52 @@
 -(void)configureCellPhoto:(UITableViewCell *)cell atIndexPath:(NSIndexPath *)indexPath{
     cell.accessoryType=0;
     UIView *cellView = cell.contentView;
+    
+    for (int y=0; y<imagePath.count+1; y++) {//количество загруженных фото+1 чтобы даже если пока пусто была картинка для загрузки фото
+        
     UIImage *image;
-  
         //create a UIImage,set the imageName to your image name
-       image= [UIImage imageNamed:@"5959_29.png"];
+    image= [UIImage imageNamed:@"5959_29.png"];
         //create UIImageView and set imageView size to you image height
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40,cell.frame.size.height)];
-       [imageView setImage:image];
-    
-    // set up the image view
-    
+    imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40,cell.frame.size.height)];
+    [imageView setImage:image];
    // [imageView setBounds:CGRectMake(0.0, 0.0, 120.0, 120.0)];
   //  [imageView setCenter:self.view.center];
     [imageView setUserInteractionEnabled:YES]; // <--- This is very important
-    
-   tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageView:)];
+     tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapOnImageView:)];
        tap.delegate=self;
     [imageView addGestureRecognizer:tap];
-    
+        imageView.tag=y;///?
     [cellView addSubview:imageView]; // add the image view as a subview of the view controllers view
+        
+        if (imagePath.count>0) {//если уже есть загруженные фото должна быть возможность их удалить
+            //удаление по нажатию на кнопку Х
+            UIButton *btnDelete = [UIButton buttonWithType:UIButtonTypeCustom];
+            CGRect btDelete = CGRectMake(10, 0, 15, 15);
+            [btnDelete  setFrame:btDelete];
+            UIImage *imageDelete = [UIImage imageNamed:@"cross"];
+            [btnDelete setImage:imageDelete forState:UIControlStateNormal];
+            [btnDelete  addTarget:self action:@selector(btnDeleteClick: cellView:image:) forControlEvents:UIControlEventTouchUpInside];
+            btnDelete.tag=y;
+            [imageView addSubview:btnDelete];
+        }
+        }//закончили формирование строки фото
+}
+
+-(void)btnDeleteClick:(UIButton *)sender cellView:(UIView *)cellView image:(int)imgTag{
+    if (sender.tag<imagePath.count) {
+        //[[NSFileManager defaultManager] removeItemAtPath:] error:nil];
+        //удаление файла по указанному пути только из папки документов(!)
+        //удаление пути из массива путей
+        [imagePath removeObjectAtIndex:sender.tag];
+        
+       /* UIView *v = [self.containerView viewWithTag:[n integerValue]];
+        [v removeFromSuperview];*/
+        UIView *imgView=[cellView viewWithTag:imgTag];//????
+        [imgView removeFromSuperview];//удаление из ячейки изображения
+        NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:2];
+        [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];//перезагружаем строку с фото
+    }
 }
 
 //////gesture
@@ -306,7 +336,7 @@
                                     label.frame.size.width + 10.0f);
     
     result = [[UIView alloc] initWithFrame:resultFrame];
-    
+   // result.backgroundColor=[UIColor lightGrayColor];
     [result addSubview:label];
 
     return result;
@@ -344,7 +374,7 @@
 {
     cityName=cityNameIs;
     districtName=districtNameIs;
-    cValue=value;
+    cValue=value;//указывает какой вид экрана запрашивается
     [self.tableView reloadData];
 }
 
@@ -368,7 +398,8 @@
         
     if (self.tableView.indexPathForSelectedRow.row==0) {
         upcoming.cValue=0;
-        upcoming.cityName=@"Город";
+        //upcoming.cityName=@"Город";
+        upcoming.cityName=cityName;
         upcoming.districtName=districtName;
         upcoming.delegate=self;
     }
@@ -377,11 +408,13 @@
             upcoming.cValue=1;
             upcoming.cityName=cityName;
             upcoming.districtName=districtName;
+            [upcoming.btnSubway setTitle:@"Метро" forState:UIControlStateNormal];
             upcoming.delegate=self;
         }else{
             upcoming.cValue=3;
             upcoming.cityName=cityName;
             upcoming.districtName=districtName;
+            [upcoming.btnSubway setTitle:@"Районы" forState:UIControlStateNormal];
             upcoming.delegate=self;
         }
 
@@ -392,7 +425,7 @@
         if (self.tableView.indexPathForSelectedRow.row==0) {
             upcoming.cValue=2;
             upcoming.delegate=self;
-            upcoming.roomsIndex=roomsIndex;
+            upcoming.rooms=rooms;
         }
     }
    upcoming.addVC=@"AddViewController";
@@ -405,7 +438,13 @@
     NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"EFlats" inManagedObjectContext:context];
     
     [newItem setValue:cityName forKey:@"city"];
-    [newItem setValue:districtName forKey:@"place"];
+    if (cValue==1) {
+        [newItem setValue:districtName forKey:@"place"];
+    }
+    else if(cValue==3){
+        [newItem setValue:districtName forKey:@"subway"];
+    }
+
     [newItem setValue:rooms forKey:@"rooms"];
     [newItem setValue:self.tvPrice.text forKey:@"price"];
     [newItem setValue:self.tvFlat.text forKey:@"descript"];
@@ -427,9 +466,17 @@
      //////add data to Core
     
     if ((![cityName isEqualToString:@"Город"])&&(![districtName isEqualToString:@"Выберите район"])&&(![rooms isEqualToString:@"Комнат"])) {//проверка полей на заполненность
-        
+      
+      
     id appDelegate=[[UIApplication sharedApplication] delegate];
-    NSString *url=[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",cityName,districtName,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],[appDelegate getUUID]];
+        NSString *url;
+        if (cValue==1) {//выбран район
+             url =[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&place=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",cityName,districtName,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],[appDelegate getUUID]];
+        }
+        else if (cValue==3){//выбрана станция метро
+              url =[NSString stringWithFormat:@"http://citatas.biz/flats/Api/create?city=%@&subway=%@&rooms=%@&phone=%@&descript=%@&photo_count=%@&creator=%@",cityName,districtName,rooms,self.tfPhone.text,self.tvFlat.text,[NSString stringWithFormat:@"%d", imagePath.count],[appDelegate getUUID]];
+        }
+
         
     url = [url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
        
@@ -484,6 +531,8 @@
         [newPhoto setValue:[NSNumber numberWithLong: [[qItem valueForKey:@"status"] longValue] ]forKey:@"id_flat"];
         [newPhoto setValue:filePathPhoto forKey:@"path"];
         }//l++
+        UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Ура!" message:@"Объявление успешно опубликовано!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alert show];
       }//this is the first record from this user
     else{
         UIAlertView* alert = [[UIAlertView alloc] initWithTitle:@"Увы!" message:@"Вы больше не можете добавлять объявления!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -574,6 +623,9 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
    UIImage *image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil); // сохраняем фото в CameraRollAlbum
+    
+    NSIndexPath *indexPath=[NSIndexPath indexPathForRow:0 inSection:2];
+    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[self.tableView cellForRowAtIndexPath:indexPath]] withRowAnimation:UITableViewRowAnimationAutomatic];//при сохранении фото перезагружаем строку с фото
           //получить путь к файлу
     imagePath [k]= (NSURL *)[info valueForKey:UIImagePickerControllerReferenceURL];
     //[self uploadPhotos:imagePath file:<#(NSURL *)#>];
