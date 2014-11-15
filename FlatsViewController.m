@@ -64,23 +64,18 @@
     NSArray *subways=[subway componentsSeparatedByString:@", "];
     
     NSPredicate *subwaysPredicate;
-    NSPredicate *resultPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subways[0]];
-    
-    //resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObject:predicate, nil]];
-    //predicate основной предикат=город+комната+избранное
-    //составной предикат=основной предикат+ предикат метро
-    if (subways.count>1) {
-        for (int r=1; r<subways.count; r++) {
-            if (![subways[r]isEqualToString:@""]) {
-                subwaysPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subways[r]];
-                
-                resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:resultPredicate, subwaysPredicate, nil]];
-            }
+    NSPredicate *resultPredicate=nil;
+  
+    for (NSString *subwayName in subways) {
+        subwaysPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subwayName];
+         
+       if (resultPredicate!=nil) {
+        resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:resultPredicate, subwaysPredicate, nil]];
+             }
+       else{
+        resultPredicate=subwaysPredicate;
+           }
         }
-    }
-    else{
-        resultPredicate=[NSPredicate predicateWithFormat:@"(subway LIKE %@)",subway];
-    }
     
     return resultPredicate;
 }
@@ -93,23 +88,24 @@
     NSArray *districts=[district componentsSeparatedByString:@", "];
 
     NSPredicate *districtPredicate;
-    NSPredicate *resultPredicate=[NSPredicate predicateWithFormat:@"(place LIKE %@)",districts[0]];
+    NSPredicate *resultPredicate=nil;
     
     //resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObject:predicate, nil]];
     //predicate основной предикат=город+комната+избранное
     //составной предикат=основной предикат+ предикат района
-    if (districts.count>1) {
-        for (int r=1; r<districts.count; r++) {
-            if (![districts[r]isEqualToString:@""]) {
-                districtPredicate=[NSPredicate predicateWithFormat:@"(place LIKE %@)",districts[r]];
-                
+   
+        for (NSString *districtVal in districts) {
+           
+            districtPredicate=[NSPredicate predicateWithFormat:@"(place LIKE %@)",districtVal];
+            
+            if (resultPredicate!=nil) {
                 resultPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:resultPredicate, districtPredicate, nil]];
             }
+            else{
+                resultPredicate=districtPredicate;
+            }
+            
         }
-    }
-    else{
-        resultPredicate=[NSPredicate predicateWithFormat:@"(place LIKE %@)",district];
-    }
 
     return resultPredicate;
 }
@@ -119,13 +115,13 @@
     
     NSPredicate *roomPredicate;
     mainPredicate=nil;
-    for (int y=0; y<room.count; y++) {
-        if ([room[y] isEqualToString:@"3-к квартира"]) {
+    for (NSString *roomVal in room) {
+        if ([roomVal isEqualToString:@"3-к квартира"]) {
             NSString *roomsF=@"4-к квартира";
-            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@) OR (rooms LIKE %@)",room[y],roomsF];
+            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@) OR (rooms LIKE %@)",roomVal,roomsF];
         }
         else{
-            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@)",room[y]];
+            roomPredicate=[NSPredicate predicateWithFormat:@"(rooms LIKE %@)",roomVal];
         }
         if (mainPredicate!=nil) {
             mainPredicate=[NSCompoundPredicate orPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate,roomPredicate, nil]];
