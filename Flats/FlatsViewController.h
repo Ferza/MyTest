@@ -26,7 +26,7 @@
 @property UIButton *btnLike;
 @property UIButton *btnDelete;
 @property NSString *rooms;
-@property UILabel *lblDescript;
+//@property UILabel *lblDescript;
 @property UITextView *tvDescript;
 @property (strong, nonatomic) NSString *cityName;
 @property (strong, nonatomic) NSString *districtName;

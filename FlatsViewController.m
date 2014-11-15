@@ -19,7 +19,7 @@
 @synthesize myList;
 @synthesize btnLike;
 @synthesize rooms;
-@synthesize lblDescript;
+//@synthesize lblDescript;
 @synthesize tvDescript;
 @synthesize myPhoto;
 @synthesize btnDelete;
@@ -141,9 +141,15 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"EFlats"];
 
     NSPredicate *predicate=[NSPredicate predicateWithFormat:@"city LIKE %@",cityName];
-    //NSLog(@"%@",predicate);
-    [self makeRoomsPredicate];
-    mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate,mainPredicate, nil]];
+ 
+    if (![rooms isEqualToString:@""]) {//если выбраны комнаты, то устанавливаем фильтр
+        [self makeRoomsPredicate];
+        mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicate,mainPredicate, nil]];
+    }
+    else{//иначе показываем предложения по любому количеству комнат
+        mainPredicate=predicate;
+    }
+    
     if (is_liked==1) {
         NSPredicate *likePredicate=[NSPredicate predicateWithFormat:@"(is_favorite==%d)",1];
         mainPredicate=[NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:mainPredicate, likePredicate, nil]];
@@ -158,7 +164,7 @@
         }
     }
     NSLog(@"%@",mainPredicate);
-    [fetchRequest setPredicate:mainPredicate];
+   [fetchRequest setPredicate:mainPredicate];
     
     self.myList = [[managedObjectContext executeFetchRequest:fetchRequest error:nil] mutableCopy];
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
@@ -278,50 +284,16 @@
     return cell;
 }
 
-/*-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    CGFloat h=50;
-    
-    if (indexPath.section==1) {
-        h=80;
-    NSDictionary *attributes = @{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:8]};
-    // NSString class method: boundingRectWithSize:options:attributes:context is
-    // available only on ios7.0 sdk.
-    NSManagedObject *listItem=[myList objectAtIndex:indexPath.row] ;
-    NSString *txt=[listItem valueForKey:@"descript"];
- 
-        
-    CGRect rect = [txt boundingRectWithSize:CGSizeMake(200, CGFLOAT_MAX)options:NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading
-                    attributes:attributes
-                    context:nil];
-    // use font information from the UILabel to calculate the size
-    CGSize textSize = [txt sizeWithAttributes:@{ NSFontAttributeName : [UIFont fontWithName:@"HelveticaNeue-Light" size:rect.size.height] }];
-   CGRect newFrame = lblDescript.frame;
-    newFrame.size.height = textSize.height;
-    lblDescript.frame = newFrame;
-   
-        if ([listItem valueForKey:@"photo_count"]!=nil) {
-            h=70;
-        }
-        
-    if (textSize.height>50) {
-         h=(h+textSize.height)*1.5;
-      }
-    }
-
-    return h;
-}
-*/
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGSize constraintSize = CGSizeMake(286.0f, CGFLOAT_MAX);
-    UIFont *theFont  = [UIFont systemFontOfSize:14.0f];
+    //UIFont *theFont  = [UIFont systemFontOfSize:14.0f];
+    UIFont *theFont=[UIFont fontWithName:@"Helvetica neue" size:12];
     CGSize theSize;
     CGFloat h=50;
     
     if (indexPath.section==1) {
-
    
     NSManagedObject *listItem=[myList objectAtIndex:indexPath.row];
     
@@ -334,12 +306,16 @@
     {
         theSize = [[listItem valueForKey:@"descript"] sizeWithFont:theFont constrainedToSize:constraintSize lineBreakMode:NSLineBreakByWordWrapping];
     }
-        if ([listItem valueForKey:@"photo_count"]!=nil) {
+        if ([[listItem valueForKey:@"photo_count"] integerValue]!=0) {
+            h=115;
+        }else
+        {
             h=70;
         }
+        
         h=h+theSize.height;
     }
-    
+  
     return h;
 }
 
@@ -352,31 +328,25 @@
     NSManagedObject *listItem=[myList objectAtIndex:indexPath.row];
 
  
-    UILabel *lblDistrict = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 100, 15)];
+    UILabel *lblDistrict = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 200, 15)];
     lblDistrict.font=[UIFont fontWithName:@"Helvetica neue" size:12];
     lblDistrict.backgroundColor = [UIColor clearColor];
-    [lblDistrict setText:[listItem valueForKey:@"place"]];
+    lblDistrict.textColor=[UIColor grayColor];
+    if ([listItem valueForKey:@"subway"]!=nil) {
+        [lblDistrict setText:[[[listItem valueForKey:@"place"] stringByAppendingString:@", "] stringByAppendingString:[listItem valueForKey:@"subway"]]];
+    }
+    else{
+         [lblDistrict setText:[listItem valueForKey:@"place"]];
+    }
+
     [cellView addSubview:lblDistrict];
     
-    tvDescript = [[UITextView alloc]initWithFrame:CGRectMake(15, 30, (cellView.frame.size.width-15), ([self tableView:[self tableView] heightForRowAtIndexPath:indexPath]-50))];
-    [tvDescript setUserInteractionEnabled:NO];
-    [tvDescript setScrollEnabled:YES];
-    tvDescript.scrollsToTop = YES;
-    tvDescript.textAlignment = NSTextAlignmentLeft;
-    tvDescript.text=[listItem valueForKey:@"descript"];
-    tvDescript.delegate=self;
-    [cellView addSubview:tvDescript];
-    
-    /*if ([listItem valueForKey:@"descript"]!=nil) {
-    height=[self tableView:[self tableView] heightForRowAtIndexPath:indexPath];
-    }*/
-    float height=tvDescript.frame.size.height-35;
- 
-    UILabel *lblRooms = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 100, 20)];
+
+    UILabel *lblRooms = [[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 20)];
     lblRooms.backgroundColor = [UIColor clearColor];
-    lblRooms.font=[UIFont fontWithName:@"Helvetica neue" size:12];
-    if ([listItem valueForKey:@"price"]!=nil) {
-        [lblRooms setText:[[[listItem valueForKey:@"rooms"] stringByAppendingString:@" "] stringByAppendingString:[listItem valueForKey:@"price"]]];
+    lblRooms.font=[UIFont fontWithName:@"Helvetica neue-Bold" size:12];
+    if ([[listItem valueForKey:@"price"]integerValue]>0) {
+        [lblRooms setText:[[[listItem valueForKey:@"rooms"] stringByAppendingString:@" "] stringByAppendingString:[[listItem valueForKey:@"price"] stringValue]]];
     }
     else{
         [lblRooms setText:[listItem valueForKey:@"rooms"]];
@@ -384,12 +354,30 @@
     
     [cellView addSubview:lblRooms];
     
+    float height=[self tableView:[self tableView] heightForRowAtIndexPath:indexPath];
+    if ([[listItem valueForKey:@"photo_count"] integerValue]>0) {
+        height=height-100;
+    }
+    else{
+        height=height-50;
+    }
+    
+    tvDescript = [[UITextView alloc]initWithFrame:CGRectMake(15, 30, (cellView.frame.size.width-15), height)];
+    [tvDescript setUserInteractionEnabled:NO];
+    [tvDescript setScrollEnabled:YES];
+    tvDescript.scrollsToTop = YES;
+    tvDescript.font=[UIFont fontWithName:@"Helvetica neue" size:12];
+    tvDescript.textAlignment = NSTextAlignmentLeft;
+    tvDescript.text=[listItem valueForKey:@"descript"];
+    tvDescript.backgroundColor=[UIColor clearColor];
+    tvDescript.delegate=self;
+    [cellView addSubview:tvDescript];
     
        ///получаем все фото, принадлежащие данной квартире
     [self getPhotoFromCore:[[listItem valueForKey:@"id"] integerValue]];
     
     if (myPhoto.count!=0) {
-  
+        height=height+30;
     UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(15, height, cell.frame.size.width, 70)];//(x,y,w,h)
    // [scrollView setBackgroundColor:[UIColor grayColor]];
    
@@ -424,8 +412,9 @@
     scrollView.pagingEnabled = YES;//////
     [cellView addSubview:scrollView];
       }//photoCount!=0
-    if ([listItem valueForKey:@"phone"]!=nil) {
-        UILabel *lblPhone = [[UILabel alloc] initWithFrame:CGRectMake(20, height+10, 100, 10)];
+    if ([listItem valueForKey:@"phone"]!=nil) {/////поправить
+        height=height+30;
+        UILabel *lblPhone = [[UILabel alloc] initWithFrame:CGRectMake(20, height, 100, 10)];
         lblPhone.font=[UIFont fontWithName:@"Helvetica neue" size:8];
         lblPhone.backgroundColor = [UIColor clearColor];
         [lblPhone setText:[listItem valueForKey:@"phone"]];

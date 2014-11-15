@@ -54,6 +54,11 @@ i=0;
     [super viewDidAppear:animated];
 }
 */
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:NO];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+}
+
 -(void)getDataFromServer{
     NSString *city;//для запроса серверу(чтобы было понятно к какой модели обращаться)
     
@@ -270,7 +275,10 @@ i=0;
             self.btnSubway.hidden=true;
             [self getDataFromServer];
             [self getDataFromCore];
-            //lastIndexPath=[NSIndexPath indexPathForRow:0 inSection:0];
+            for (int u=0; u<self.myList.count; u++) {
+                [self setIsSelected:u isSelected:0];
+            }
+            
         }else{
             if (cityName!=nil) {
                 [self getDataFromServer];
@@ -376,6 +384,7 @@ i=0;
 
                 if ([cityName isEqualToString:cell.textLabel.text]) {
                     cell.accessoryType=UITableViewCellAccessoryCheckmark;
+                    [self setIsSelected:indexPath.row isSelected:1];
                   }
             }
                 break;
@@ -597,12 +606,13 @@ i=0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{// написать метод, который будет выбранной записи устанавливать значение поля is_selected в 1
+{
     for (int u=0; u<self.myList.count; u++) {
       NSManagedObject *listItem = [self.myList objectAtIndex:u];
         if ([[listItem valueForKey:@"is_selected"]integerValue]==1) {
             lastIndexPath=[NSIndexPath indexPathForRow:u inSection:0];
         }
+       
     }
     UITableViewCell *newCell =[tableView cellForRowAtIndexPath:indexPath];
 

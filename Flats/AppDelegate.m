@@ -226,29 +226,32 @@
     for (int j=0; j<_bashItems.count; j++) {
         QItem *qItem=[_bashItems objectAtIndex:j];
         
+        if (qItem.city!=nil) {
+            
         NSManagedObjectContext *context = [self managedObjectContext];
         
         NSManagedObject *newItem = [NSEntityDescription insertNewObjectForEntityForName:@"EFlats" inManagedObjectContext:context];
         [newItem setValue:qItem.city forKey:@"city"];
         [newItem setValue:qItem.place forKey:@"place"];
         [newItem setValue:qItem.rooms forKey:@"rooms"];
-        [newItem setValue:qItem.price forKey:@"price"];
+        [newItem setValue:[NSNumber numberWithInt: [qItem.price intValue]] forKey:@"price"];
         [newItem setValue:qItem.descript forKey:@"descript"];
         //[newItem setValue:qItem.photo forKey:@"photo"];
         [newItem setValue:qItem.name forKey:@"name"];
         [newItem setValue:qItem.phone forKey:@"phone"];
         [newItem setValue:qItem.pub_date forKey:@"pub_date"];
-       // [newItem setValue:qItem.subway forKey:@"subway"];
+        [newItem setValue:qItem.subway forKey:@"subway"];
         [newItem setValue:[NSNumber numberWithLong:[qItem.id_rec intValue]] forKey:@"id"];
         [newItem setValue:[NSNumber numberWithInt:[qItem.photo_count intValue]] forKey:@"photo_count"];
-        //[newItem setValue:[NSNumber numberWithInt:0] forKey:@"is_favorite"];
-        days=qItem.days;
-        //[newItem setValue:[NSNumber numberWithInt:[qItem.likes intValue]] forKey:@"likes"];
+
         NSError *error = nil;
         if(![context save:&error]){
             NSLog(@"Can't save! %@ %@", error, [error localizedDescription]);
         }
-        
+      }// если есть новые записи
+        else{
+            days=qItem.days;
+        }
     }
     
 }

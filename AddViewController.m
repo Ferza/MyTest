@@ -80,7 +80,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     UILabel *labelView = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 200, 20)];
     labelView.text=@"РАСПОЛОЖЕНИЕ";
@@ -88,6 +88,11 @@
     self.tableView.tableHeaderView = headerView;
     k=0;
     cValue=1;
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:NO];
+    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -446,7 +451,7 @@
     }
 
     [newItem setValue:rooms forKey:@"rooms"];
-    [newItem setValue:self.tvPrice.text forKey:@"price"];
+    [newItem setValue: [NSNumber numberWithInt:[self.tvPrice.text intValue] ] forKey:@"price"];
     [newItem setValue:self.tvFlat.text forKey:@"descript"];
     [newItem setValue:self.tfPhone.text forKey:@"phone"];
     /*[newItem setValue:qItem.name forKey:@"name"];

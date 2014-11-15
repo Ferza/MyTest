@@ -78,7 +78,7 @@
         days=value;
     }
     if ([property isEqualToString:@"subway"]) {
-        days=value;
+        subway=value;
     }
     //  _publication=value;
     
